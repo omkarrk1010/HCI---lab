@@ -1,6 +1,8 @@
+import lofiTrackUrl from '../assets/Shiloh Dynasty - Novocaine (Lyrics) - Chill Taste (128k).mp3';
+
 /**
- * Web Audio API Procedural Sound Engine
- * Provides authentic, lightweight ambient sounds and chimes with zero external file dependencies or CORS failures.
+ * Web Audio API Procedural Sound Engine & Audio Player
+ * Provides authentic ambient sounds and chimes, with Lo-Fi track streaming from assets.
  */
 
 class SoundEngine {
@@ -17,10 +19,12 @@ class SoundEngine {
       stream: 0.4,
       birds: 0.35,
       fireplace: 0.45,
-      lofi: 0.4,
+      lofi: 0.5,
       whitenoise: 0.3
     };
     this.activeTracks = new Set();
+    this.lofiAudio = null;
+    this.lofiSourceNode = null;
   }
 
   initContext() {
@@ -41,6 +45,9 @@ class SoundEngine {
     if (this.ctx && this.masterGain && !this.isMuted) {
       this.masterGain.gain.setTargetAtTime(this.masterVolume, this.ctx.currentTime, 0.05);
     }
+    if (this.lofiAudio && !this.lofiSourceNode) {
+      this.lofiAudio.volume = this.isMuted ? 0 : (this.trackVolumes.lofi ?? 0.5) * this.masterVolume;
+    }
   }
 
   setMute(mute) {
@@ -49,12 +56,19 @@ class SoundEngine {
       const target = mute ? 0 : this.masterVolume;
       this.masterGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.05);
     }
+    if (this.lofiAudio && !this.lofiSourceNode) {
+      this.lofiAudio.volume = mute ? 0 : (this.trackVolumes.lofi ?? 0.5) * this.masterVolume;
+    }
   }
 
   setTrackVolume(trackId, val) {
     this.trackVolumes[trackId] = Math.max(0, Math.min(1, val));
     if (this.channels[trackId] && this.channels[trackId].gainNode && this.ctx) {
       this.channels[trackId].gainNode.gain.setTargetAtTime(this.trackVolumes[trackId], this.ctx.currentTime, 0.05);
+    }
+    if (trackId === 'lofi' && this.lofiAudio && !this.lofiSourceNode) {
+      const effectiveVol = (this.trackVolumes.lofi ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
+      this.lofiAudio.volume = Math.max(0, Math.min(1, effectiveVol));
     }
   }
 
@@ -380,7 +394,60 @@ class SoundEngine {
   }
 
   _createLofiGenerator(targetNode) {
-    // Calming 4-chord electric piano / Rhodes synthesis progression
+    try {
+      if (!this.lofiAudio) {
+        this.lofiAudio = new Audio(lofiTrackUrl);
+        this.lofiAudio.loop = true;
+        this.lofiAudio.preload = 'auto';
+
+        // Continuous loop fallback to guarantee uninterrupted infinite playback
+        this.lofiAudio.addEventListener('ended', () => {
+          this.lofiAudio.currentTime = 0;
+          this.lofiAudio.play().catch(() => {});
+        });
+      }
+
+      // Route through Web Audio graph if possible for unified gain control
+      if (!this.lofiSourceNode && this.ctx) {
+        try {
+          this.lofiSourceNode = this.ctx.createMediaElementSource(this.lofiAudio);
+        } catch (err) {
+          console.warn('Could not create MediaElementSource:', err);
+        }
+      }
+
+      if (this.lofiSourceNode) {
+        this.lofiSourceNode.connect(targetNode);
+      } else {
+        // Fallback: sync volume directly on HTMLAudioElement
+        const effectiveVol = (this.trackVolumes.lofi ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
+        this.lofiAudio.volume = Math.max(0, Math.min(1, effectiveVol));
+      }
+
+      const playPromise = this.lofiAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn('Lo-fi audio playback pending user interaction:', e);
+        });
+      }
+
+      return () => {
+        try {
+          if (this.lofiAudio) {
+            this.lofiAudio.pause();
+          }
+          if (this.lofiSourceNode) {
+            this.lofiSourceNode.disconnect();
+          }
+        } catch {}
+      };
+    } catch (e) {
+      console.warn('Error playing lo-fi asset, falling back to synth:', e);
+      return this._createLofiSynthFallback(targetNode);
+    }
+  }
+
+  _createLofiSynthFallback(targetNode) {
     const chordProgressions = [
       [261.63, 329.63, 392.00, 493.88], // Cmaj7
       [220.00, 261.63, 329.63, 392.00], // Am7

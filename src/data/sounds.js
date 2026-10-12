@@ -17,11 +17,11 @@ export const SOUND_TRACKS = [
   },
   {
     id: 'lofi',
-    name: 'Lo-Fi Chill Chords',
+    name: 'Lo-Fi (Novocaine)',
     category: 'Music',
     iconName: 'Music',
-    description: 'Soothing electric piano harmonics',
-    defaultVolume: 0.5
+    description: 'Shiloh Dynasty - Novocaine (Continuous Chill Loop)',
+    defaultVolume: 0.55
   },
   {
     id: 'ocean',
