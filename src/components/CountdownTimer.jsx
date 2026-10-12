@@ -115,6 +115,29 @@ export function CountdownTimer() {
         </div>
       </div>
 
+      {/* Quick Countdown Presets */}
+      <div className="flex items-center gap-1.5 my-2">
+        {[2, 5, 15, 25].map((mins) => (
+          <button
+            key={mins}
+            onClick={() => {
+              if (!countdownIsRunning) {
+                setCountdownTime(0, mins, 0);
+              }
+            }}
+            disabled={countdownIsRunning}
+            className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
+              countdownTotal === mins * 60
+                ? 'bg-sky-400 text-stone-950 shadow-md scale-105'
+                : 'bg-white/5 text-stone-300 hover:text-white hover:bg-white/10'
+            } ${countdownIsRunning ? 'opacity-40 cursor-not-allowed' : ''}`}
+            title={`Set countdown to ${mins} minutes`}
+          >
+            {mins === 2 ? '⚡ 2m Timer' : `${mins}m`}
+          </button>
+        ))}
+      </div>
+
       {/* Control Buttons */}
       <div className="flex items-center gap-4 mt-4">
         <button

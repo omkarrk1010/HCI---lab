@@ -2,15 +2,16 @@ export const ENVIRONMENTS = [
   {
     id: 'cozy-cafe',
     name: 'Cozy Café',
-    tagline: 'Warm wooden tables, steaming mugs, and gentle chatter',
-    description: 'A cozy corner café with warm tungsten lamps, polished oak desks, and the faint murmur of espresso machines. Ideal for active focus and creative writing.',
+    tagline: 'Warm wooden tables, steaming mugs, and 2-minute fall cafe jazz',
+    description: 'A cozy corner café with warm tungsten lamps, polished oak desks, and 2-Minute Fall Cafe ambience with relaxing jazz music. Ideal for active focus and creative writing.',
     // Curated high-res Unsplash photo with optimized query parameters
     imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=2000&q=80',
     fallbackGradient: 'linear-gradient(135deg, #2b1d16 0%, #4a3325 50%, #1a120c 100%)',
     accentColor: '#d97706', // Amber-600
     accentLight: '#fef3c7', // Amber-100
     themeColor: 'amber',
-    suggestedSounds: ['cafe', 'rain', 'lofi'],
+    suggestedSounds: ['cafe', 'lofi', 'rain'],
+    defaultDurationMinutes: 2,
     overlayDefault: 0.45,
     effect: 'steam', // subtle steam effect
     palette: {
@@ -22,14 +23,15 @@ export const ENVIRONMENTS = [
   {
     id: 'rainy-window',
     name: 'Rainy Window',
-    tagline: 'Soft gray skies, rhythmic raindrops, and peaceful solace',
-    description: 'A quiet study desk framed by broad glass panels streaked with gentle rain. The rhythmic patter provides instant calm and deep concentration.',
+    tagline: 'Soft gray skies, 2-minute rain timer, and peaceful solace',
+    description: 'A quiet study desk framed by broad glass panels streaked with 2-minute rain timer sounds. The rhythmic patter provides instant calm and deep concentration.',
     imageUrl: 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=2000&q=80',
     fallbackGradient: 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #0f172a 100%)',
     accentColor: '#38bdf8', // Sky-400
     accentLight: '#e0f2fe',
     themeColor: 'sky',
     suggestedSounds: ['rain', 'lofi', 'whitenoise'],
+    defaultDurationMinutes: 2,
     overlayDefault: 0.5,
     effect: 'rain', // falling raindrops animation
     palette: {
@@ -41,14 +43,15 @@ export const ENVIRONMENTS = [
   {
     id: 'japanese-study',
     name: 'Japanese Study Room',
-    tagline: 'Minimalist tatami, bonsai garden, and mindful serenity',
-    description: 'An open traditional Japanese room with light cedarwood, paper shoji screens, and a serene courtyard view. Encourages clarity and mindful discipline.',
+    tagline: 'Minimalist tatami, bonsai garden, and Bloody Stream lo-fi',
+    description: 'An open traditional Japanese room with light cedarwood, paper shoji screens, and Bloody Stream (Lo-Fi HipHop mix). Encourages clarity and mindful discipline.',
     imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=2000&q=80',
     fallbackGradient: 'linear-gradient(135deg, #2c3029 0%, #444b3c 50%, #1c2019 100%)',
     accentColor: '#10b981', // Emerald / Sage
     accentLight: '#d1fae5',
     themeColor: 'emerald',
-    suggestedSounds: ['rain', 'lofi', 'stream'],
+    suggestedSounds: ['stream', 'lofi', 'rain'],
+    defaultDurationMinutes: 2,
     overlayDefault: 0.4,
     effect: 'leaves',
     palette: {

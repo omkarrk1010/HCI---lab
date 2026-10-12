@@ -193,9 +193,9 @@ export function StudyProvider({ children }) {
   const [pomodoroSettings, setPomodoroSettings] = useState(() => {
     const val = localStorage.getItem(STORAGE_KEYS.POMODORO_SETTINGS);
     return val ? JSON.parse(val) : {
-      focusMinutes: 25,
-      shortBreakMinutes: 5,
-      longBreakMinutes: 15,
+      focusMinutes: 2,
+      shortBreakMinutes: 1,
+      longBreakMinutes: 5,
       longBreakInterval: 4,
       autoStartBreaks: false
     };
@@ -208,8 +208,8 @@ export function StudyProvider({ children }) {
   const [pomoPhase, setPomoPhase] = useState('focus'); // 'focus' | 'shortBreak' | 'longBreak'
   const [pomoIsRunning, setPomoIsRunning] = useState(false);
   const [pomoCycleCount, setPomoCycleCount] = useState(0); // 0 to 4
-  const [pomoRemainingSeconds, setPomoRemainingSeconds] = useState(25 * 60);
-  const [pomoTotalSeconds, setPomoTotalSeconds] = useState(25 * 60);
+  const [pomoRemainingSeconds, setPomoRemainingSeconds] = useState(2 * 60);
+  const [pomoTotalSeconds, setPomoTotalSeconds] = useState(2 * 60);
   const [pomoSessionCompletionNotice, setPomoSessionCompletionNotice] = useState(null);
 
   // Timestamp-based accurate interval ref
@@ -348,9 +348,9 @@ export function StudyProvider({ children }) {
   }, [pomoIsRunning, pomoRemainingSeconds]);
 
   // --- Countdown Timer Engine ---
-  const [countdownConfig, setCountdownConfig] = useState({ hours: 0, minutes: 25, seconds: 0 });
-  const [countdownRemaining, setCountdownRemaining] = useState(25 * 60);
-  const [countdownTotal, setCountdownTotal] = useState(25 * 60);
+  const [countdownConfig, setCountdownConfig] = useState({ hours: 0, minutes: 2, seconds: 0 });
+  const [countdownRemaining, setCountdownRemaining] = useState(2 * 60);
+  const [countdownTotal, setCountdownTotal] = useState(2 * 60);
   const [countdownIsRunning, setCountdownIsRunning] = useState(false);
   const countdownTimerRef = useRef(null);
   const countdownEndTimeRef = useRef(null);

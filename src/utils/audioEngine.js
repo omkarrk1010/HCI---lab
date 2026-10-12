@@ -1,8 +1,12 @@
+import rainTimerAudio from '../assets/2 Minute timer with rain sounds.mp3';
+import cafeTimerAudio from '../assets/2 Minute Fall Cafe Timer ☕ Cozy 4K Coffee Shop & Relaxing Jazz Music Study, Focus, Read, Homework.mp3';
+import bloodyStreamAudio from "../assets/Bloody Stream (but it's lofi hiphop) JoJo's Bizarre Adventure Battle Tendency.mp3";
 import lofiTrackUrl from '../assets/Shiloh Dynasty - Novocaine (Lyrics) - Chill Taste (128k).mp3';
 
 /**
- * Web Audio API Procedural Sound Engine & Audio Player
- * Provides authentic ambient sounds and chimes, with Lo-Fi track streaming from assets.
+ * Web Audio API Procedural Sound Engine & Asset Audio Player
+ * Integrates 2-Minute Rain Timer, 2-Minute Fall Cafe Timer, Bloody Stream Lo-Fi,
+ * and Shiloh Dynasty Lo-Fi with continuous uninterrupted looping and procedural fallbacks.
  */
 
 class SoundEngine {
@@ -13,18 +17,18 @@ class SoundEngine {
     this.isMuted = false;
     this.masterVolume = 0.7;
     this.trackVolumes = {
-      rain: 0.5,
-      cafe: 0.4,
+      rain: 0.6,
+      cafe: 0.6,
       ocean: 0.5,
-      stream: 0.4,
+      stream: 0.6,
       birds: 0.35,
       fireplace: 0.45,
-      lofi: 0.5,
+      lofi: 0.55,
       whitenoise: 0.3
     };
     this.activeTracks = new Set();
-    this.lofiAudio = null;
-    this.lofiSourceNode = null;
+    this.audioElements = {};
+    this.audioSourceNodes = {};
   }
 
   initContext() {
@@ -45,9 +49,12 @@ class SoundEngine {
     if (this.ctx && this.masterGain && !this.isMuted) {
       this.masterGain.gain.setTargetAtTime(this.masterVolume, this.ctx.currentTime, 0.05);
     }
-    if (this.lofiAudio && !this.lofiSourceNode) {
-      this.lofiAudio.volume = this.isMuted ? 0 : (this.trackVolumes.lofi ?? 0.5) * this.masterVolume;
-    }
+    Object.keys(this.audioElements).forEach(trackId => {
+      if (!this.audioSourceNodes[trackId] && this.audioElements[trackId]) {
+        const vol = this.isMuted ? 0 : (this.trackVolumes[trackId] ?? 0.5) * this.masterVolume;
+        this.audioElements[trackId].volume = Math.max(0, Math.min(1, vol));
+      }
+    });
   }
 
   setMute(mute) {
@@ -56,9 +63,12 @@ class SoundEngine {
       const target = mute ? 0 : this.masterVolume;
       this.masterGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.05);
     }
-    if (this.lofiAudio && !this.lofiSourceNode) {
-      this.lofiAudio.volume = mute ? 0 : (this.trackVolumes.lofi ?? 0.5) * this.masterVolume;
-    }
+    Object.keys(this.audioElements).forEach(trackId => {
+      if (!this.audioSourceNodes[trackId] && this.audioElements[trackId]) {
+        const vol = mute ? 0 : (this.trackVolumes[trackId] ?? 0.5) * this.masterVolume;
+        this.audioElements[trackId].volume = Math.max(0, Math.min(1, vol));
+      }
+    });
   }
 
   setTrackVolume(trackId, val) {
@@ -66,9 +76,9 @@ class SoundEngine {
     if (this.channels[trackId] && this.channels[trackId].gainNode && this.ctx) {
       this.channels[trackId].gainNode.gain.setTargetAtTime(this.trackVolumes[trackId], this.ctx.currentTime, 0.05);
     }
-    if (trackId === 'lofi' && this.lofiAudio && !this.lofiSourceNode) {
-      const effectiveVol = (this.trackVolumes.lofi ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
-      this.lofiAudio.volume = Math.max(0, Math.min(1, effectiveVol));
+    if (this.audioElements[trackId] && !this.audioSourceNodes[trackId]) {
+      const effectiveVol = (this.trackVolumes[trackId] ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
+      this.audioElements[trackId].volume = Math.max(0, Math.min(1, effectiveVol));
     }
   }
 
@@ -118,6 +128,62 @@ class SoundEngine {
       osc.stop(now + 0.05);
     } catch {
       // Ignored
+    }
+  }
+
+  _playAudioTrack(trackId, audioSrc, targetNode, fallbackSynthFn) {
+    try {
+      if (!this.audioElements[trackId]) {
+        const audio = new Audio(audioSrc);
+        audio.loop = true;
+        audio.preload = 'auto';
+
+        // Continuous loop listener ensures infinite uninterrupted replay when ended
+        audio.addEventListener('ended', () => {
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        });
+
+        this.audioElements[trackId] = audio;
+      }
+
+      const audio = this.audioElements[trackId];
+
+      // Route through Web Audio graph if possible for unified gain control
+      if (!this.audioSourceNodes[trackId] && this.ctx) {
+        try {
+          this.audioSourceNodes[trackId] = this.ctx.createMediaElementSource(audio);
+        } catch (err) {
+          console.warn(`Could not create MediaElementSource for ${trackId}:`, err);
+        }
+      }
+
+      if (this.audioSourceNodes[trackId]) {
+        this.audioSourceNodes[trackId].connect(targetNode);
+      } else {
+        // Direct volume synchronization fallback
+        const effectiveVol = (this.trackVolumes[trackId] ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
+        audio.volume = Math.max(0, Math.min(1, effectiveVol));
+      }
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn(`Audio playback for ${trackId} pending user interaction:`, e);
+        });
+      }
+
+      return () => {
+        try {
+          audio.pause();
+          if (this.audioSourceNodes[trackId]) {
+            this.audioSourceNodes[trackId].disconnect();
+          }
+        } catch {}
+      };
+    } catch (e) {
+      console.warn(`Error playing track ${trackId}, using fallback:`, e);
+      return fallbackSynthFn ? fallbackSynthFn() : () => {};
     }
   }
 
@@ -194,7 +260,7 @@ class SoundEngine {
     list.forEach(id => this.stopTrack(id));
   }
 
-  // --- Internal Procedural Generators ---
+  // --- Track Generators ---
 
   _generateNoiseBuffer(duration = 3) {
     const bufferSize = this.ctx.sampleRate * duration;
@@ -206,12 +272,16 @@ class SoundEngine {
       const white = Math.random() * 2 - 1;
       data[i] = (lastOut + 0.02 * white) / 1.02;
       lastOut = data[i];
-      data[i] *= 3.5; // Gain compensation
+      data[i] *= 3.5;
     }
     return buffer;
   }
 
   _createRainGenerator(targetNode) {
+    return this._playAudioTrack('rain', rainTimerAudio, targetNode, () => this._createRainSynthFallback(targetNode));
+  }
+
+  _createRainSynthFallback(targetNode) {
     const noise = this.ctx.createBufferSource();
     noise.buffer = this._generateNoiseBuffer(4);
     noise.loop = true;
@@ -237,45 +307,11 @@ class SoundEngine {
     };
   }
 
-  _createOceanGenerator(targetNode) {
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = this._generateNoiseBuffer(5);
-    noise.loop = true;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(500, this.ctx.currentTime);
-
-    const waveGain = this.ctx.createGain();
-    waveGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-
-    // LFO to simulate sweeping ocean waves
-    const lfo = this.ctx.createOscillator();
-    lfo.frequency.setValueAtTime(0.12, this.ctx.currentTime); // ~8 sec wave period
-    const lfoGain = this.ctx.createGain();
-    lfoGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-
-    lfo.connect(lfoGain);
-    lfoGain.connect(waveGain.gain);
-
-    noise.connect(filter);
-    filter.connect(waveGain);
-    waveGain.connect(targetNode);
-
-    lfo.start();
-    noise.start();
-
-    return () => {
-      try {
-        noise.stop();
-        lfo.stop();
-        noise.disconnect();
-        lfo.disconnect();
-      } catch {}
-    };
+  _createCafeGenerator(targetNode) {
+    return this._playAudioTrack('cafe', cafeTimerAudio, targetNode, () => this._createCafeSynthFallback(targetNode));
   }
 
-  _createCafeGenerator(targetNode) {
+  _createCafeSynthFallback(targetNode) {
     const noise = this.ctx.createBufferSource();
     noise.buffer = this._generateNoiseBuffer(3);
     noise.loop = true;
@@ -298,6 +334,10 @@ class SoundEngine {
   }
 
   _createStreamGenerator(targetNode) {
+    return this._playAudioTrack('stream', bloodyStreamAudio, targetNode, () => this._createStreamSynthFallback(targetNode));
+  }
+
+  _createStreamSynthFallback(targetNode) {
     const noise = this.ctx.createBufferSource();
     noise.buffer = this._generateNoiseBuffer(3);
     noise.loop = true;
@@ -315,6 +355,96 @@ class SoundEngine {
       try {
         noise.stop();
         noise.disconnect();
+      } catch {}
+    };
+  }
+
+  _createLofiGenerator(targetNode) {
+    return this._playAudioTrack('lofi', lofiTrackUrl, targetNode, () => this._createLofiSynthFallback(targetNode));
+  }
+
+  _createLofiSynthFallback(targetNode) {
+    const chordProgressions = [
+      [261.63, 329.63, 392.00, 493.88], // Cmaj7
+      [220.00, 261.63, 329.63, 392.00], // Am7
+      [174.61, 220.00, 261.63, 329.63], // Fmaj7
+      [196.00, 246.94, 293.66, 349.23]  // G7
+    ];
+    let step = 0;
+    let interval = null;
+
+    const playChord = () => {
+      if (!this.ctx || this.ctx.state !== 'running') return;
+      const notes = chordProgressions[step % chordProgressions.length];
+      step++;
+      const now = this.ctx.currentTime;
+      notes.forEach(freq => {
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(700, now);
+
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.06, now + 0.4);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.2);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(targetNode);
+
+          osc.start(now);
+          osc.stop(now + 4.5);
+        } catch {}
+      });
+    };
+
+    playChord();
+    interval = setInterval(playChord, 4600);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }
+
+  _createOceanGenerator(targetNode) {
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = this._generateNoiseBuffer(5);
+    noise.loop = true;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(500, this.ctx.currentTime);
+
+    const waveGain = this.ctx.createGain();
+    waveGain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+
+    const lfo = this.ctx.createOscillator();
+    lfo.frequency.setValueAtTime(0.12, this.ctx.currentTime);
+    const lfoGain = this.ctx.createGain();
+    lfoGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(waveGain.gain);
+
+    noise.connect(filter);
+    filter.connect(waveGain);
+    waveGain.connect(targetNode);
+
+    lfo.start();
+    noise.start();
+
+    return () => {
+      try {
+        noise.stop();
+        lfo.stop();
+        noise.disconnect();
+        lfo.disconnect();
       } catch {}
     };
   }
@@ -366,7 +496,6 @@ class SoundEngine {
     filter.connect(targetNode);
     noise.start();
 
-    // Occasional crackle pops
     const interval = setInterval(() => {
       if (!this.ctx) return;
       try {
@@ -390,109 +519,6 @@ class SoundEngine {
         noise.stop();
         noise.disconnect();
       } catch {}
-    };
-  }
-
-  _createLofiGenerator(targetNode) {
-    try {
-      if (!this.lofiAudio) {
-        this.lofiAudio = new Audio(lofiTrackUrl);
-        this.lofiAudio.loop = true;
-        this.lofiAudio.preload = 'auto';
-
-        // Continuous loop fallback to guarantee uninterrupted infinite playback
-        this.lofiAudio.addEventListener('ended', () => {
-          this.lofiAudio.currentTime = 0;
-          this.lofiAudio.play().catch(() => {});
-        });
-      }
-
-      // Route through Web Audio graph if possible for unified gain control
-      if (!this.lofiSourceNode && this.ctx) {
-        try {
-          this.lofiSourceNode = this.ctx.createMediaElementSource(this.lofiAudio);
-        } catch (err) {
-          console.warn('Could not create MediaElementSource:', err);
-        }
-      }
-
-      if (this.lofiSourceNode) {
-        this.lofiSourceNode.connect(targetNode);
-      } else {
-        // Fallback: sync volume directly on HTMLAudioElement
-        const effectiveVol = (this.trackVolumes.lofi ?? 0.5) * (this.isMuted ? 0 : this.masterVolume);
-        this.lofiAudio.volume = Math.max(0, Math.min(1, effectiveVol));
-      }
-
-      const playPromise = this.lofiAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((e) => {
-          console.warn('Lo-fi audio playback pending user interaction:', e);
-        });
-      }
-
-      return () => {
-        try {
-          if (this.lofiAudio) {
-            this.lofiAudio.pause();
-          }
-          if (this.lofiSourceNode) {
-            this.lofiSourceNode.disconnect();
-          }
-        } catch {}
-      };
-    } catch (e) {
-      console.warn('Error playing lo-fi asset, falling back to synth:', e);
-      return this._createLofiSynthFallback(targetNode);
-    }
-  }
-
-  _createLofiSynthFallback(targetNode) {
-    const chordProgressions = [
-      [261.63, 329.63, 392.00, 493.88], // Cmaj7
-      [220.00, 261.63, 329.63, 392.00], // Am7
-      [174.61, 220.00, 261.63, 329.63], // Fmaj7
-      [196.00, 246.94, 293.66, 349.23]  // G7
-    ];
-    let step = 0;
-    let interval = null;
-
-    const playChord = () => {
-      if (!this.ctx || this.ctx.state !== 'running') return;
-      const notes = chordProgressions[step % chordProgressions.length];
-      step++;
-      const now = this.ctx.currentTime;
-      notes.forEach(freq => {
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const filter = this.ctx.createBiquadFilter();
-
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, now);
-
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(700, now);
-
-          gain.gain.setValueAtTime(0, now);
-          gain.gain.linearRampToValueAtTime(0.06, now + 0.4);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.2);
-
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(targetNode);
-
-          osc.start(now);
-          osc.stop(now + 4.5);
-        } catch {}
-      });
-    };
-
-    playChord();
-    interval = setInterval(playChord, 4600);
-
-    return () => {
-      if (interval) clearInterval(interval);
     };
   }
 

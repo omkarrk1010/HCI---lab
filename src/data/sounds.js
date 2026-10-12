@@ -1,19 +1,27 @@
 export const SOUND_TRACKS = [
   {
     id: 'rain',
-    name: 'Gentle Rain',
-    category: 'Weather',
+    name: '2-Min Rain Timer Sounds',
+    category: 'Timer & Weather',
     iconName: 'CloudRain',
-    description: 'Steady rainfall soothing the senses',
-    defaultVolume: 0.55
+    description: '2-Minute timer with gentle rain sounds (continuous loop)',
+    defaultVolume: 0.6
   },
   {
     id: 'cafe',
-    name: 'Café Murmur',
-    category: 'Atmosphere',
+    name: '2-Min Fall Café Timer',
+    category: 'Timer & Music',
     iconName: 'Coffee',
-    description: 'Soft barista chatter and espresso warmth',
-    defaultVolume: 0.45
+    description: '2-Minute Fall Cafe timer with cozy coffee shop & relaxing jazz (continuous loop)',
+    defaultVolume: 0.6
+  },
+  {
+    id: 'stream',
+    name: 'Bloody Stream (Lo-Fi)',
+    category: 'Music',
+    iconName: 'Music',
+    description: 'Bloody Stream JoJo Battle Tendency Lo-Fi HipHop (continuous loop)',
+    defaultVolume: 0.6
   },
   {
     id: 'lofi',
@@ -38,14 +46,6 @@ export const SOUND_TRACKS = [
     iconName: 'Feather',
     description: 'Crisp morning birdsong in the woodland canopy',
     defaultVolume: 0.4
-  },
-  {
-    id: 'stream',
-    name: 'Mountain Creek',
-    category: 'Nature',
-    iconName: 'Droplets',
-    description: 'Gentle babbling brook over polished stones',
-    defaultVolume: 0.45
   },
   {
     id: 'fireplace',

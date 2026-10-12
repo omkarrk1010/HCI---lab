@@ -204,6 +204,29 @@ export function PomodoroTimer({ size = 'large' }) {
         </div>
       </div>
 
+      {/* Quick Session Presets (2m Quick Timer, 5m, 15m, 25m Standard) */}
+      <div className="flex items-center gap-1.5 my-2">
+        {[2, 5, 15, 25].map((mins) => (
+          <button
+            key={mins}
+            onClick={() => {
+              if (!pomoIsRunning) {
+                setPomodoroSettings(prev => ({ ...prev, focusMinutes: mins }));
+              }
+            }}
+            disabled={pomoIsRunning}
+            className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
+              pomodoroSettings.focusMinutes === mins
+                ? 'bg-amber-400 text-stone-950 shadow-md scale-105'
+                : 'bg-white/5 text-stone-300 hover:text-white hover:bg-white/10'
+            } ${pomoIsRunning ? 'opacity-40 cursor-not-allowed' : ''}`}
+            title={`Set focus duration to ${mins} minutes`}
+          >
+            {mins === 2 ? '⚡ 2m Timer' : `${mins}m`}
+          </button>
+        ))}
+      </div>
+
       {/* Primary & Secondary Action Controls (Fitts's Law: Giant 72px center button) */}
       <div className="flex items-center gap-4 sm:gap-6 mt-4">
         {/* Reset Button with Error Prevention */}
