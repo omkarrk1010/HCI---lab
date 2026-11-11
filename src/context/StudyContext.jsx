@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { ENVIRONMENTS, DEFAULT_ENVIRONMENT_ID } from '../data/environments';
 import { SOUND_TRACKS } from '../data/sounds';
 import { soundEngine } from '../utils/audioEngine';
 import { createSessionRecord } from '../utils/analyticsUtils';
+import { useAuth } from './AuthContext';
 import confetti from 'canvas-confetti';
 
 const StudyContext = createContext(null);
@@ -20,40 +21,20 @@ const STORAGE_KEYS = {
 };
 
 export function StudyProvider({ children }) {
+  const { user } = useAuth();
+  const isLoadedRef = useRef(false);
+
+  const getScopedKey = useCallback((baseKey) => {
+    return user?.id ? `${baseKey}_${user.id}` : `${baseKey}_guest`;
+  }, [user?.id]);
+
   // --- Environment & Visual Atmosphere ---
-  const [currentEnvId, setCurrentEnvId] = useState(() => {
-    return localStorage.getItem(STORAGE_KEYS.ENVIRONMENT) || DEFAULT_ENVIRONMENT_ID;
-  });
-  const [overlayOpacity, setOverlayOpacity] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.OVERLAY);
-    return val !== null ? parseFloat(val) : 0.45;
-  });
-  const [visualEffectsEnabled, setVisualEffectsEnabled] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.EFFECTS);
-    return val !== null ? JSON.parse(val) : true;
-  });
-  const [favorites, setFavorites] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.FAVORITES);
-    return val ? JSON.parse(val) : ['cozy-cafe', 'rainy-window'];
-  });
+  const [currentEnvId, setCurrentEnvId] = useState(DEFAULT_ENVIRONMENT_ID);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.45);
+  const [visualEffectsEnabled, setVisualEffectsEnabled] = useState(true);
+  const [favorites, setFavorites] = useState(['cozy-cafe', 'rainy-window']);
 
   const currentEnvironment = ENVIRONMENTS.find(e => e.id === currentEnvId) || ENVIRONMENTS[0];
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.ENVIRONMENT, currentEnvId);
-  }, [currentEnvId]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.OVERLAY, String(overlayOpacity));
-  }, [overlayOpacity]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.EFFECTS, JSON.stringify(visualEffectsEnabled));
-  }, [visualEffectsEnabled]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(favorites));
-  }, [favorites]);
 
   const toggleFavorite = (envId) => {
     setFavorites(prev => 
@@ -62,35 +43,153 @@ export function StudyProvider({ children }) {
   };
 
   // --- App Settings ---
-  const [appSettings, setAppSettings] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.APP_SETTINGS);
-    return val ? JSON.parse(val) : {
-      clockIs24Hour: false,
-      showClockSeconds: true,
-      reduceMotion: false,
-      theme: 'dark'
-    };
+  const [appSettings, setAppSettings] = useState({
+    clockIs24Hour: false,
+    showClockSeconds: true,
+    reduceMotion: false,
+    theme: 'dark'
   });
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.APP_SETTINGS, JSON.stringify(appSettings));
-  }, [appSettings]);
 
   // --- Tasks State ---
-  const [tasks, setTasks] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.TASKS);
-    return val ? JSON.parse(val) : [
-      { id: 't1', title: 'Review Human-Computer Interaction chapter 4', subject: 'HCI', priority: 'High', completed: false, createdAt: Date.now() },
-      { id: 't2', title: 'Prepare usability evaluation heuristic notes', subject: 'HCI', priority: 'Medium', completed: false, createdAt: Date.now() },
-      { id: 't3', title: 'Finish cognitive walkthrough presentation slides', subject: 'Design', priority: 'Low', completed: true, createdAt: Date.now() }
-    ];
+  const [tasks, setTasks] = useState([]);
+  const [activeTaskId, setActiveTaskId] = useState(null);
+
+  // --- Session History & Analytics ---
+  const [sessionHistory, setSessionHistory] = useState([]);
+  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(120);
+
+  // --- Pomodoro Settings ---
+  const [pomodoroSettings, setPomodoroSettings] = useState({
+    focusMinutes: 25,
+    shortBreakMinutes: 5,
+    longBreakMinutes: 15,
+    longBreakInterval: 4,
+    autoStartBreaks: false
   });
 
-  const [activeTaskId, setActiveTaskId] = useState('t1');
+  // Reload and isolate data per authenticated user ID
+  useEffect(() => {
+    const uid = user?.id;
+
+    // Load Tasks
+    const tasksKey = getScopedKey(STORAGE_KEYS.TASKS);
+    const storedTasks = localStorage.getItem(tasksKey);
+    if (storedTasks) {
+      try {
+        const parsed = JSON.parse(storedTasks);
+        setTasks(parsed);
+        if (parsed.length > 0) setActiveTaskId(parsed[0].id);
+      } catch {
+        setTasks([]);
+      }
+    } else {
+      const defaultTasks = [
+        { id: 't1_' + Date.now(), title: `Explore StudyScape focus tools (${user?.name || 'Student'})`, subject: 'General', priority: 'High', completed: false, createdAt: Date.now() },
+        { id: 't2_' + Date.now(), title: 'Complete your first Pomodoro study block', subject: 'Focus', priority: 'High', completed: false, createdAt: Date.now() },
+        { id: 't3_' + Date.now(), title: 'Check your study streak in Analytics', subject: 'HCI', priority: 'Medium', completed: false, createdAt: Date.now() }
+      ];
+      setTasks(defaultTasks);
+      setActiveTaskId(defaultTasks[0].id);
+      localStorage.setItem(tasksKey, JSON.stringify(defaultTasks));
+    }
+
+    // Load Sessions
+    const sessionsKey = getScopedKey(STORAGE_KEYS.SESSIONS);
+    const storedSessions = localStorage.getItem(sessionsKey);
+    setSessionHistory(storedSessions ? JSON.parse(storedSessions) : []);
+
+    // Load Goal
+    const goalKey = getScopedKey(STORAGE_KEYS.DAILY_GOAL);
+    const storedGoal = localStorage.getItem(goalKey);
+    setDailyGoalMinutes(storedGoal ? parseInt(storedGoal, 10) : 120);
+
+    // Load Pomodoro Settings
+    const pomoKey = getScopedKey(STORAGE_KEYS.POMODORO_SETTINGS);
+    const storedPomo = localStorage.getItem(pomoKey);
+    if (storedPomo) {
+      try { setPomodoroSettings(JSON.parse(storedPomo)); } catch {}
+    } else {
+      setPomodoroSettings({
+        focusMinutes: 25,
+        shortBreakMinutes: 5,
+        longBreakMinutes: 15,
+        longBreakInterval: 4,
+        autoStartBreaks: false
+      });
+    }
+
+    // Load Environment
+    const envKey = getScopedKey(STORAGE_KEYS.ENVIRONMENT);
+    const storedEnv = localStorage.getItem(envKey);
+    if (storedEnv) setCurrentEnvId(storedEnv);
+
+    // Load Overlay Opacity
+    const overlayKey = getScopedKey(STORAGE_KEYS.OVERLAY);
+    const storedOverlay = localStorage.getItem(overlayKey);
+    if (storedOverlay !== null) setOverlayOpacity(parseFloat(storedOverlay));
+
+    // Load Favorites
+    const favKey = getScopedKey(STORAGE_KEYS.FAVORITES);
+    const storedFavs = localStorage.getItem(favKey);
+    if (storedFavs) {
+      try { setFavorites(JSON.parse(storedFavs)); } catch {}
+    }
+
+    // Load App Settings
+    const appKey = getScopedKey(STORAGE_KEYS.APP_SETTINGS);
+    const storedApp = localStorage.getItem(appKey);
+    if (storedApp) {
+      try { setAppSettings(JSON.parse(storedApp)); } catch {}
+    }
+
+    isLoadedRef.current = true;
+  }, [user?.id]);
+
+  // Persist user-specific changes
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.ENVIRONMENT), currentEnvId);
+  }, [currentEnvId, user?.id]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
-  }, [tasks]);
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.OVERLAY), String(overlayOpacity));
+  }, [overlayOpacity, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.EFFECTS), JSON.stringify(visualEffectsEnabled));
+  }, [visualEffectsEnabled, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.FAVORITES), JSON.stringify(favorites));
+  }, [favorites, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.APP_SETTINGS), JSON.stringify(appSettings));
+  }, [appSettings, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.TASKS), JSON.stringify(tasks));
+  }, [tasks, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.SESSIONS), JSON.stringify(sessionHistory));
+  }, [sessionHistory, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.DAILY_GOAL), String(dailyGoalMinutes));
+  }, [dailyGoalMinutes, user?.id]);
+
+  useEffect(() => {
+    if (!isLoadedRef.current) return;
+    localStorage.setItem(getScopedKey(STORAGE_KEYS.POMODORO_SETTINGS), JSON.stringify(pomodoroSettings));
+  }, [pomodoroSettings, user?.id]);
 
   const activeTask = tasks.find(t => t.id === activeTaskId) || null;
 
@@ -144,25 +243,6 @@ export function StudyProvider({ children }) {
     }));
   };
 
-  // --- Session History & Analytics ---
-  const [sessionHistory, setSessionHistory] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.SESSIONS);
-    return val ? JSON.parse(val) : [];
-  });
-
-  const [dailyGoalMinutes, setDailyGoalMinutes] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.DAILY_GOAL);
-    return val ? parseInt(val, 10) : 120;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(sessionHistory));
-  }, [sessionHistory]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.DAILY_GOAL, String(dailyGoalMinutes));
-  }, [dailyGoalMinutes]);
-
   const recordSession = (durationMinutes, type = 'pomodoro', phase = 'focus') => {
     const newRecord = createSessionRecord({
       type,
@@ -190,21 +270,6 @@ export function StudyProvider({ children }) {
   };
 
   // --- Pomodoro Timer Engine ---
-  const [pomodoroSettings, setPomodoroSettings] = useState(() => {
-    const val = localStorage.getItem(STORAGE_KEYS.POMODORO_SETTINGS);
-    return val ? JSON.parse(val) : {
-      focusMinutes: 2,
-      shortBreakMinutes: 1,
-      longBreakMinutes: 5,
-      longBreakInterval: 4,
-      autoStartBreaks: false
-    };
-  });
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.POMODORO_SETTINGS, JSON.stringify(pomodoroSettings));
-  }, [pomodoroSettings]);
-
   const [pomoPhase, setPomoPhase] = useState('focus'); // 'focus' | 'shortBreak' | 'longBreak'
   const [pomoIsRunning, setPomoIsRunning] = useState(false);
   const [pomoCycleCount, setPomoCycleCount] = useState(0); // 0 to 4

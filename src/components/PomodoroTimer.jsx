@@ -15,7 +15,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-export function PomodoroTimer({ size = 'large' }) {
+export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVisible = true }) {
   const {
     pomoPhase,
     pomoIsRunning,
@@ -48,9 +48,9 @@ export function PomodoroTimer({ size = 'large' }) {
 
   const progressPercent = calculateProgressPercentage(pomoRemainingSeconds, pomoTotalSeconds);
 
-  // SVG circular dimensions
-  const radius = size === 'large' ? 140 : 100;
-  const strokeWidth = size === 'large' ? 10 : 8;
+  // SVG circular dimensions - compact and less distracting in Immersive Focus Mode
+  const radius = isImmersive ? 105 : (size === 'large' ? 140 : 100);
+  const strokeWidth = isImmersive ? 7 : (size === 'large' ? 10 : 8);
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progressPercent / 100) * circumference;
 
@@ -129,16 +129,29 @@ export function PomodoroTimer({ size = 'large' }) {
   };
 
   const isHighlighted = hciDemoState.highlightElementId === 'pomo-timer';
+  const shouldFadeControls = isImmersive && pomoIsRunning && !controlsVisible;
 
   return (
     <div 
       id="pomodoro-timer-container"
-      className={`relative flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl glass-panel border border-white/10 shadow-2xl transition-all duration-300 ${
+      className={`relative flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
+        isImmersive 
+          ? `p-4 sm:p-6 rounded-3xl ${
+              shouldFadeControls
+                ? 'bg-black/10 border border-white/5 shadow-none backdrop-blur-[2px]'
+                : 'bg-stone-900/40 border border-white/10 shadow-2xl backdrop-blur-md'
+            }`
+          : 'p-6 sm:p-8 rounded-3xl glass-panel border border-white/10 shadow-2xl'
+      } ${
         isHighlighted ? 'hci-highlight ring-4 ring-amber-400' : ''
       }`}
     >
       {/* Top Phase Header & Cycle Indicator */}
-      <div className="flex items-center justify-between w-full max-w-sm mb-4">
+      <div className={`flex items-center justify-between w-full max-w-sm mb-3 transition-all duration-700 ease-in-out ${
+        shouldFadeControls 
+          ? 'opacity-0 pointer-events-none -translate-y-2 max-h-0 mb-0 overflow-hidden' 
+          : 'opacity-100 translate-y-0 max-h-12'
+      }`}>
         <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${currentPhaseDetails.badgeClass}`}>
           <PhaseIcon className="w-3.5 h-3.5" />
           <span>{currentPhaseDetails.label}</span>
@@ -163,7 +176,18 @@ export function PomodoroTimer({ size = 'large' }) {
       </div>
 
       {/* Circular Progress Ring & Large Remaining Time */}
-      <div className="relative flex items-center justify-center my-4 group">
+      <div 
+        onClick={() => {
+          if (isImmersive) {
+            if (pomoIsRunning) pausePomo();
+            else startPomo();
+          }
+        }}
+        className={`relative flex items-center justify-center my-2 group select-none transition-transform duration-300 ${
+          isImmersive ? 'cursor-pointer hover:scale-102' : ''
+        }`}
+        title={isImmersive ? (pomoIsRunning ? 'Click to Pause' : 'Click to Start') : undefined}
+      >
         <svg
           width={radius * 2 + strokeWidth * 2}
           height={radius * 2 + strokeWidth * 2}
@@ -195,17 +219,25 @@ export function PomodoroTimer({ size = 'large' }) {
 
         {/* Center Time Display */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-          <span className="text-5xl sm:text-6xl font-black tracking-tight text-white font-mono-numbers drop-shadow-lg">
+          <span className={`${
+            isImmersive ? 'text-4xl sm:text-5xl' : 'text-5xl sm:text-6xl'
+          } font-black tracking-tight text-white font-mono-numbers drop-shadow-lg`}>
             {formatSeconds(pomoRemainingSeconds)}
           </span>
-          <span className="text-xs sm:text-sm font-semibold tracking-wide text-stone-300 mt-1 uppercase">
-            {pomoIsRunning ? 'Time Remaining' : 'Ready'}
+          <span className={`text-[10px] sm:text-xs font-semibold tracking-wider text-stone-300 mt-1 uppercase transition-opacity duration-700 ${
+            shouldFadeControls ? 'opacity-0' : 'opacity-80'
+          }`}>
+            {pomoIsRunning ? (isImmersive ? '' : 'Time Remaining') : 'Ready'}
           </span>
         </div>
       </div>
 
       {/* Quick Session Presets (2m Quick Timer, 5m, 15m, 25m Standard) */}
-      <div className="flex items-center gap-1.5 my-2">
+      <div className={`flex items-center gap-1.5 my-1 transition-all duration-700 ease-in-out ${
+        shouldFadeControls 
+          ? 'opacity-0 pointer-events-none -translate-y-1 max-h-0 my-0 overflow-hidden' 
+          : 'opacity-100 translate-y-0 max-h-12'
+      }`}>
         {[2, 5, 15, 25].map((mins) => (
           <button
             key={mins}
@@ -228,7 +260,11 @@ export function PomodoroTimer({ size = 'large' }) {
       </div>
 
       {/* Primary & Secondary Action Controls (Fitts's Law: Giant 72px center button) */}
-      <div className="flex items-center gap-4 sm:gap-6 mt-4">
+      <div className={`flex items-center gap-4 sm:gap-6 mt-3 transition-all duration-700 ease-in-out ${
+        shouldFadeControls 
+          ? 'opacity-0 pointer-events-none translate-y-2 max-h-0 mt-0 overflow-hidden' 
+          : 'opacity-100 translate-y-0 max-h-24'
+      }`}>
         {/* Reset Button with Error Prevention */}
         <button
           onClick={handleResetRequest}
@@ -269,7 +305,11 @@ export function PomodoroTimer({ size = 'large' }) {
       </div>
 
       {/* Pinned Active Focus Task (Reduces Short-Term Memory Load) */}
-      <div className="w-full max-w-sm mt-6 pt-5 border-t border-white/10 flex flex-col gap-2">
+      <div className={`w-full max-w-sm mt-4 pt-3 border-t border-white/10 flex flex-col gap-2 transition-all duration-700 ease-in-out ${
+        shouldFadeControls 
+          ? 'opacity-0 pointer-events-none translate-y-2 max-h-0 mt-0 pt-0 border-transparent overflow-hidden' 
+          : 'opacity-100 translate-y-0 max-h-36'
+      }`}>
         <div className="flex items-center justify-between text-xs text-stone-400">
           <span className="flex items-center gap-1.5 font-medium">
             <Target className="w-3.5 h-3.5 text-amber-400" />

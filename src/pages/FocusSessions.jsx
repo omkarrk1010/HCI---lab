@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStudy } from '../context/StudyContext';
 import { PomodoroTimer } from '../components/PomodoroTimer';
 import { StudyClock } from '../components/StudyClock';
@@ -8,9 +8,7 @@ import {
   Flame, 
   Volume2, 
   VolumeX, 
-  SlidersHorizontal,
-  Maximize2,
-  Sparkles
+  SlidersHorizontal
 } from 'lucide-react';
 
 export function FocusSessions({ onOpenAudioMixer }) {
@@ -21,16 +19,92 @@ export function FocusSessions({ onOpenAudioMixer }) {
     toggleMute,
     activeSounds,
     masterVolume,
-    handleMasterVolumeChange
+    handleMasterVolumeChange,
+    pomoIsRunning
   } = useStudy();
 
   const [focusView, setFocusView] = useState('timer'); // 'timer' | 'clock'
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const fadeTimeoutRef = useRef(null);
+
+  // Reliable Escape key listener to exit Focus Mode
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setCurrentTab('dashboard');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setCurrentTab]);
+
+  // Handle auto-fade after timer starts and reveal upon user interaction
+  useEffect(() => {
+    // If timer is paused, reset, or stopped: keep controls visible
+    if (!pomoIsRunning) {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+        fadeTimeoutRef.current = null;
+      }
+      setControlsVisible(true);
+      return;
+    }
+
+    // Timer is running: wait 2.5s (2–3 seconds window), then smoothly fade out controls
+    const scheduleFadeOut = () => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+      fadeTimeoutRef.current = setTimeout(() => {
+        setControlsVisible(false);
+      }, 2500);
+    };
+
+    setControlsVisible(true);
+    scheduleFadeOut();
+
+    // Reset inactivity timer on any mouse, keyboard, or touch interaction
+    const handleUserInteraction = () => {
+      setControlsVisible(true);
+      scheduleFadeOut();
+    };
+
+    window.addEventListener('mousemove', handleUserInteraction, { passive: true });
+    window.addEventListener('mousedown', handleUserInteraction, { passive: true });
+    window.addEventListener('keydown', handleUserInteraction, { passive: true });
+    window.addEventListener('touchstart', handleUserInteraction, { passive: true });
+
+    return () => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+        fadeTimeoutRef.current = null;
+      }
+      window.removeEventListener('mousemove', handleUserInteraction);
+      window.removeEventListener('mousedown', handleUserInteraction);
+      window.removeEventListener('keydown', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+    };
+  }, [pomoIsRunning]);
 
   return (
-    <main className="fixed inset-0 z-30 flex flex-col justify-between p-6 sm:p-8 animate-fadeIn select-none">
-      {/* Top Floating Minimal Bar */}
-      <div className="w-full max-w-5xl mx-auto flex items-center justify-between z-40">
+    <main 
+      className="fixed inset-0 z-30 flex flex-col justify-between p-4 sm:p-8 animate-fadeIn select-none overflow-hidden"
+      onMouseMove={() => {
+        if (pomoIsRunning && !controlsVisible) {
+          setControlsVisible(true);
+        }
+      }}
+    >
+      {/* Top Floating Minimal Bar - Smoothly fades out during active focus */}
+      <div 
+        className={`w-full max-w-5xl mx-auto flex items-center justify-between z-40 transition-all duration-700 ease-in-out ${
+          pomoIsRunning && !controlsVisible 
+            ? 'opacity-0 pointer-events-none -translate-y-4' 
+            : 'opacity-100 translate-y-0'
+        }`}
+      >
         {/* Back / Exit Focus Button */}
         <button
           onClick={() => setCurrentTab('dashboard')}
@@ -112,11 +186,11 @@ export function FocusSessions({ onOpenAudioMixer }) {
         </div>
       </div>
 
-      {/* Main Center Stage: Pure Timer or Clock */}
+      {/* Main Center Stage: Pure, Non-distracting Timer or Clock */}
       <div className="flex-1 flex items-center justify-center w-full my-auto z-30">
-        <div className="w-full max-w-md animate-fadeIn">
+        <div className="w-full max-w-md animate-fadeIn flex justify-center">
           {focusView === 'timer' ? (
-            <PomodoroTimer size="large" />
+            <PomodoroTimer isImmersive={true} controlsVisible={controlsVisible} />
           ) : (
             <div className="scale-110 sm:scale-125 transition-transform">
               <StudyClock />
@@ -125,9 +199,15 @@ export function FocusSessions({ onOpenAudioMixer }) {
         </div>
       </div>
 
-      {/* Minimal Bottom Environment Tagline */}
-      <div className="w-full text-center text-xs text-stone-400/80 font-medium z-30 pointer-events-none">
-        <span className="px-3 py-1 rounded-full bg-stone-950/40 backdrop-blur-sm border border-white/5">
+      {/* Minimal Bottom Environment Tagline - Smoothly fades during active focus */}
+      <div 
+        className={`w-full text-center text-xs text-stone-400/80 font-medium z-30 pointer-events-none transition-all duration-700 ease-in-out ${
+          pomoIsRunning && !controlsVisible 
+            ? 'opacity-0 translate-y-4' 
+            : 'opacity-100 translate-y-0'
+        }`}
+      >
+        <span className="px-3 py-1 rounded-full bg-stone-950/30 backdrop-blur-sm border border-white/5">
           {currentEnvironment.name} • {currentEnvironment.tagline}
         </span>
       </div>

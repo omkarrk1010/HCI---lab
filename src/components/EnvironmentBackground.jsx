@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStudy } from '../context/StudyContext';
 
 export function EnvironmentBackground() {
-  const { currentEnvironment, overlayOpacity, visualEffectsEnabled, appSettings } = useStudy();
+  const { currentEnvironment, overlayOpacity, visualEffectsEnabled, appSettings, currentTab } = useStudy();
   const [imageFailed, setImageFailed] = useState(false);
 
   // If environment changes, reset image failure state
@@ -11,11 +11,17 @@ export function EnvironmentBackground() {
   }, [currentEnvironment.id]);
 
   const showEffects = visualEffectsEnabled && !appSettings.reduceMotion;
+  const isFocusMode = currentTab === 'focus';
+
+  // Make the selected background image significantly more visible in Focus Mode
+  const effectiveOverlayOpacity = isFocusMode
+    ? Math.min(overlayOpacity * 0.35, 0.15)
+    : overlayOpacity;
 
   return (
     <div className="fixed inset-0 -z-10 pointer-events-none select-none overflow-hidden transition-colors duration-1000">
       {/* Fallback Atmospheric Gradient */}
-      <div 
+      <div
         className="absolute inset-0 transition-all duration-1000"
         style={{ background: currentEnvironment.fallbackGradient }}
       />
@@ -27,7 +33,7 @@ export function EnvironmentBackground() {
           src={currentEnvironment.imageUrl}
           alt={currentEnvironment.name}
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 animate-fadeIn"
-          style={{ filter: 'saturate(1.08) contrast(1.02)' }}
+          style={{ filter: isFocusMode ? 'saturate(1.12) contrast(1.05)' : 'saturate(1.08) contrast(1.02)' }}
           onError={() => setImageFailed(true)}
         />
       )}
@@ -90,15 +96,18 @@ export function EnvironmentBackground() {
 
       {/* Tunable Dark Dimming Overlay */}
       <div
-        className="absolute inset-0 transition-opacity duration-300"
+        className="absolute inset-0 transition-opacity duration-700 ease-in-out"
         style={{
           backgroundColor: '#000000',
-          opacity: overlayOpacity
+          opacity: effectiveOverlayOpacity
         }}
       />
 
       {/* Vignette Gradient for Depth and Legibility */}
-      <div className="absolute inset-0 bg-radial-vignette opacity-50" />
+      <div
+        className={`absolute inset-0 bg-radial-vignette transition-opacity duration-700 ${isFocusMode ? 'opacity-20' : 'opacity-50'
+          }`}
+      />
     </div>
   );
 }

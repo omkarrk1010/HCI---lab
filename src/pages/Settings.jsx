@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStudy } from '../context/StudyContext';
+import { useAuth } from '../context/AuthContext';
 import { soundEngine } from '../utils/audioEngine';
 import { 
   Settings as SettingsIcon, 
@@ -13,10 +14,14 @@ import {
   Download,
   AlertTriangle,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  User,
+  LogOut,
+  KeyRound
 } from 'lucide-react';
 
 export function Settings() {
+  const { user, logout, authProviderType } = useAuth();
   const { 
     pomodoroSettings, 
     setPomodoroSettings, 
@@ -270,7 +275,60 @@ export function Settings() {
         </div>
       </section>
 
-      {/* 4. Data Backup & Reset */}
+      {/* 4. Account & Authentication Profile */}
+      {user && (
+        <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <User className="w-4 h-4 text-amber-400" />
+              <span>Account & Security Profile</span>
+            </h3>
+            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              {authProviderType === 'supabase' ? 'Supabase Auth' : 'Encrypted Vault'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <span className="text-[11px] text-stone-400 block mb-0.5">Full Name</span>
+              <span className="text-xs font-bold text-white block">{user.name || 'Student'}</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <span className="text-[11px] text-stone-400 block mb-0.5">Email Address</span>
+              <span className="text-xs font-bold text-white block truncate">{user.email}</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <span className="text-[11px] text-stone-400 block mb-0.5">Isolated Storage Key</span>
+              <span className="text-xs font-mono text-stone-300 block truncate">{user.id}</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <span className="text-[11px] text-stone-400 block mb-0.5">Security Architecture</span>
+              <span className="text-xs font-semibold text-emerald-300 block">
+                {authProviderType === 'supabase' ? 'Cloud Session with Row-Level Security' : 'PBKDF2 Salted Hashes (Zero Plaintext)'}
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
+            <p className="text-xs text-stone-400">
+              Your tasks, focus history, and study metrics are encrypted and isolated to this account.
+            </p>
+
+            <button
+              onClick={() => logout()}
+              className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-2 transition-colors self-start sm:self-center"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Log Out of StudyScape</span>
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* 5. Data Backup & Reset */}
       <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
         <h3 className="text-sm font-bold text-white flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-amber-400" />
