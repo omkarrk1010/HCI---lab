@@ -59,7 +59,7 @@ export function CountdownTimer() {
   const isHighlighted = hciDemoState.highlightElementId === 'countdown-timer';
 
   return (
-    <div className={`relative flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl glass-panel border border-white/10 shadow-2xl transition-all ${
+    <div className={`relative flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-[#3c3633] border border-white/10 shadow-2xl transition-all ${
       isHighlighted ? 'hci-highlight ring-4 ring-amber-400' : ''
     }`}>
       {/* Configuration Header Toggle */}
@@ -151,7 +151,7 @@ export function CountdownTimer() {
 
         <button
           onClick={countdownIsRunning ? pauseCountdown : startCountdown}
-          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-3xl flex items-center justify-center text-stone-950 font-bold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 ${
+          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-3xl flex items-center justify-center text-[#1c1816] font-bold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 ${
             countdownIsRunning
               ? 'bg-sky-400 hover:bg-sky-300 shadow-sky-400/30'
               : 'bg-white hover:bg-sky-200 shadow-white/20'
@@ -159,9 +159,9 @@ export function CountdownTimer() {
           aria-label={countdownIsRunning ? 'Pause countdown' : 'Start countdown'}
         >
           {countdownIsRunning ? (
-            <Pause className="w-7 h-7 fill-stone-950" />
+            <Pause className="w-7 h-7 fill-[#1c1816]" />
           ) : (
-            <Play className="w-7 h-7 fill-stone-950 translate-x-0.5" />
+            <Play className="w-7 h-7 fill-[#1c1816] translate-x-0.5" />
           )}
         </button>
 
@@ -180,7 +180,7 @@ export function CountdownTimer() {
 
       {/* Configuration Form Modal */}
       {isConfiguring && (
-        <div className="absolute inset-0 bg-stone-950/95 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between z-30 animate-fadeIn border border-white/20">
+        <div className="absolute inset-0 bg-[#1c1816]/95 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between z-30 animate-fadeIn border border-white/20">
           <div>
             <h4 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
               <SlidersHorizontal className="w-4 h-4 text-sky-400" />

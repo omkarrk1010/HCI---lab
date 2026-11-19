@@ -103,23 +103,23 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
   };
 
   return (
-    <div className="rounded-3xl glass-panel border border-amber-500/40 p-6 sm:p-8 shadow-2xl animate-fadeIn">
+    <div className="rounded-3xl glass-panel border border-amber-400/50 p-6 sm:p-8 shadow-2xl animate-fadeIn">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-900/10">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300">
+          <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300/50 flex items-center justify-center text-amber-700">
             <Zap className="w-6 h-6 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/25 text-amber-300">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-700">
                 Professor Interactive Benchmark
               </span>
               <span className="text-xs text-stone-400 font-mono-numbers">
                 ID: {activePrinciple.id}
               </span>
             </div>
-            <h2 className="text-xl font-extrabold text-white">
+            <h2 className="text-xl font-extrabold text-stone-800">
               {activePrinciple.title} in Action
             </h2>
           </div>
@@ -127,7 +127,7 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
 
         <button
           onClick={onClose}
-          className="self-start sm:self-center px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors"
+          className="self-start sm:self-center px-4 py-2 rounded-xl bg-stone-900/8 hover:bg-stone-900/15 text-xs font-bold text-stone-700 transition-colors"
         >
           Exit Demonstration
         </button>
@@ -137,28 +137,28 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
         {/* Left Column: Academic Justification & Evaluator Talking Points */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-4 rounded-2xl bg-black/40 border border-white/10">
-            <h4 className="text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-amber-400" />
+          <div className="p-4 rounded-2xl bg-stone-900/4 border border-stone-900/10">
+            <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-amber-500" />
               <span>Theoretical Requirement</span>
             </h4>
-            <p className="text-xs text-stone-300 leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               {activePrinciple.definition}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-            <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200/60">
+            <h4 className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>StudyScape Implementation Mechanism</span>
             </h4>
-            <p className="text-xs text-amber-100/90 leading-relaxed">
+            <p className="text-xs text-amber-800/90 leading-relaxed">
               {activePrinciple.implementation}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-stone-300">
-            <h4 className="font-bold text-white mb-1">Professor's Evaluation Guide:</h4>
+          <div className="p-4 rounded-2xl bg-stone-900/4 border border-stone-900/10 text-xs text-stone-600">
+            <h4 className="font-bold text-stone-800 mb-1">Professor's Evaluation Guide:</h4>
             <ul className="space-y-1.5 text-stone-400 text-[11px] list-disc list-inside">
               <li>Observe the immediate response to user input.</li>
               <li>Verify that status is never hidden or ambiguous.</li>
@@ -167,11 +167,11 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
           </div>
         </div>
 
-        {/* Right Column: Live Interactive Simulator Bench */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-stone-900/80 border border-white/15 flex flex-col justify-between">
+        {/* Right Column: Live Interactive Simulator Bench (deliberately dark console styling for contrast) */}
+        <div className="lg:col-span-7 p-6 rounded-2xl bg-[#2a2523] border border-white/15 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
-              <span className="text-xs font-bold text-stone-200">
+              <span className="text-xs font-bold text-white/80">
                 Interactive Test Sandbox: {activePrinciple.component}
               </span>
               <span className="text-[10px] text-amber-400 font-semibold uppercase">
@@ -182,11 +182,11 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 1: FEEDBACK */}
             {(demoType === 'feedback' || demoType === 'informative-feedback' || demoType === 'visibility-status') && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   Click the controls below. Notice how the visual progress bar, color state, and acoustic Solfeggio chime immediately inform you of system status.
                 </p>
 
-                <div className="p-5 rounded-2xl bg-stone-950 border border-white/10 flex flex-col items-center">
+                <div className="p-5 rounded-2xl bg-[#1c1816] border border-white/10 flex flex-col items-center">
                   <div className="text-3xl font-extrabold text-white font-mono-numbers mb-2">
                     {Math.floor(testTimerSecs / 60)}:{String(testTimerSecs % 60).padStart(2, '0')}
                   </div>
@@ -208,7 +208,7 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                       className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all ${
                         testTimerRunning
                           ? 'bg-amber-500 text-stone-950'
-                          : 'bg-white text-stone-950 hover:bg-amber-200'
+                          : 'bg-white text-[#1c1816] hover:bg-amber-200'
                       }`}
                     >
                       {testTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -231,15 +231,15 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                         setTestTimerRunning(false);
                         setTestTimerSecs(1500);
                       }}
-                      className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-400 hover:text-white"
+                      className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/50 hover:text-white"
                       title="Reset"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
                   </div>
 
-                  <div className="mt-4 text-[11px] text-stone-400">
-                    Status: <strong className={testTimerRunning ? 'text-amber-400' : 'text-stone-300'}>
+                  <div className="mt-4 text-[11px] text-white/50">
+                    Status: <strong className={testTimerRunning ? 'text-amber-400' : 'text-white/70'}>
                       {testTimerRunning ? 'ACTIVE RUNNING (Continuous Visual Feedback)' : 'PAUSED (Static Feedback)'}
                     </strong>
                   </div>
@@ -250,19 +250,19 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 2: ERROR PREVENTION */}
             {demoType === 'error-prevention' && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   Attempt to type invalid values (e.g. <strong>0</strong>, <strong>-10</strong>, or <strong>400</strong>) to witness proactive boundary enforcement and instructive guidance.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-stone-950 border border-white/10 space-y-3">
+                <div className="p-4 rounded-2xl bg-[#1c1816] border border-white/10 space-y-3">
                   <div>
-                    <label className="text-xs text-stone-300 block mb-1">Test Study Duration (Valid: 1 to 120 minutes):</label>
+                    <label className="text-xs text-white/70 block mb-1">Test Study Duration (Valid: 1 to 120 minutes):</label>
                     <div className="flex gap-2">
                       <input
                         type="number"
                         value={inputVal}
                         onChange={(e) => handleTestValidate(e.target.value)}
-                        className="p-2.5 rounded-xl bg-stone-900 border border-white/20 text-white font-mono-numbers text-sm w-32 focus:outline-none focus:border-amber-400"
+                        className="p-2.5 rounded-xl bg-[#2a2523] border border-white/20 text-white font-mono-numbers text-sm w-32 focus:outline-none focus:border-amber-400"
                       />
                       <div className="flex gap-1.5">
                         <button
@@ -306,20 +306,20 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 3: NATURAL MAPPINGS */}
             {demoType === 'mappings' && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   Moving the slider to the right directly increases physical acoustic power and dB output, adhering to natural human spatial models (Right/Up = Increase).
                 </p>
 
-                <div className="p-5 rounded-2xl bg-stone-950 border border-white/10 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#1c1816] border border-white/10 space-y-4">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-stone-300 font-bold">Acoustic Gain Mapping</span>
+                    <span className="text-white/70 font-bold">Acoustic Gain Mapping</span>
                     <span className="text-amber-300 font-mono-numbers">
                       {Math.round(mappingVolume * 100)}% ({(-40 + mappingVolume * 40).toFixed(1)} dB)
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <VolumeX className="w-5 h-5 text-stone-500" />
+                    <VolumeX className="w-5 h-5 text-white/40" />
                     <input
                       type="range"
                       min="0"
@@ -331,19 +331,19 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                         setMappingVolume(val);
                         soundEngine.setMasterVolume(val);
                       }}
-                      className="w-full accent-amber-500 cursor-pointer h-2 bg-stone-800 rounded-lg"
+                      className="w-full accent-amber-500 cursor-pointer h-2 bg-white/10 rounded-lg"
                     />
                     <Volume2 className="w-5 h-5 text-amber-400" />
                   </div>
 
                   {/* Visual Decibel Gauge */}
-                  <div className="w-full bg-stone-900 h-4 rounded-lg overflow-hidden flex items-center px-1">
+                  <div className="w-full bg-white/10 h-4 rounded-lg overflow-hidden flex items-center px-1">
                     <div
                       className="h-2 rounded bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 transition-all"
                       style={{ width: `${mappingVolume * 100}%` }}
                     />
                   </div>
-                  <div className="text-[10px] text-stone-400 flex justify-between">
+                  <div className="text-[10px] text-white/50 flex justify-between">
                     <span>Silent (-∞ dB)</span>
                     <span>Comfortable (-12 dB)</span>
                     <span>Max Output (0 dB)</span>
@@ -355,7 +355,7 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 4: USER CONTROL */}
             {demoType === 'user-control' && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   Switch environments right now while watching the main Study timer. StudyScape guarantees the user’s ongoing session is never halted or restarted unexpectedly.
                 </p>
 
@@ -370,16 +370,16 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                       className={`p-3 rounded-xl border text-left transition-all ${
                         currentEnvironment.id === env.id
                           ? 'bg-amber-500/20 border-amber-500 text-white shadow-lg'
-                          : 'bg-white/5 border-white/10 text-stone-300 hover:bg-white/10'
+                          : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
                       }`}
                     >
                       <span className="block text-xs font-bold truncate">{env.name}</span>
-                      <span className="text-[10px] text-stone-400">{env.themeColor} theme</span>
+                      <span className="text-[10px] text-white/50">{env.themeColor} theme</span>
                     </button>
                   ))}
                 </div>
 
-                <div className="p-3 rounded-xl bg-stone-950 border border-white/10 text-xs text-stone-300 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-[#1c1816] border border-white/10 text-xs text-white/70 flex items-center justify-between">
                   <span>Current Active Environment: <strong>{currentEnvironment.name}</strong></span>
                   <span className="text-amber-400 font-mono-numbers">Timer Running: {pomoIsRunning ? 'YES' : 'STANDBY'}</span>
                 </div>
@@ -389,11 +389,11 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 5: REVERSAL OF ACTIONS */}
             {demoType === 'reversal-of-actions' && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   Toggle the task checkboxes below. Notice that every completed action is completely undoable with zero loss of state or penalty.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-stone-950 border border-white/10 space-y-2">
+                <div className="p-4 rounded-2xl bg-[#1c1816] border border-white/10 space-y-2">
                   {reversalTasks.map(t => (
                     <div key={t.id} className="flex items-center justify-between p-2 rounded-xl bg-white/5">
                       <div className="flex items-center gap-2">
@@ -403,13 +403,13 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                           onChange={() => toggleReversal(t.id)}
                           className="accent-amber-500 cursor-pointer"
                         />
-                        <span className={`text-xs ${t.done ? 'line-through text-stone-500' : 'text-stone-200'}`}>
+                        <span className={`text-xs ${t.done ? 'line-through text-white/40' : 'text-white'}`}>
                           {t.title}
                         </span>
                       </div>
                       <button
                         onClick={() => toggleReversal(t.id)}
-                        className="text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-stone-300"
+                        className="text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white/70"
                       >
                         {t.done ? 'Undo Complete' : 'Mark Done'}
                       </button>
@@ -417,10 +417,10 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                   ))}
 
                   {undoLog.length > 0 && (
-                    <div className="mt-3 pt-2 border-t border-white/10 text-[10px] text-stone-400 font-mono-numbers">
+                    <div className="mt-3 pt-2 border-t border-white/10 text-[10px] text-white/50 font-mono-numbers">
                       Recent reversible events:
                       {undoLog.map((log, i) => (
-                        <div key={i} className="text-stone-500">• {log}</div>
+                        <div key={i} className="text-white/40">• {log}</div>
                       ))}
                     </div>
                   )}
@@ -431,11 +431,11 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
             {/* DEMO 6: DISCOVERABILITY & CLOSURE & OTHER */}
             {(demoType === 'discoverability' || demoType === 'closure' || demoType === 'conceptual-model' || demoType === 'affordances' || demoType === 'signifiers' || demoType === 'consistency' || demoType === 'universal-usability' || demoType === 'memory-load' || demoType === 'fitts-law' || demoType === 'hicks-law') && (
               <div className="space-y-4">
-                <p className="text-xs text-stone-300">
+                <p className="text-xs text-white/70">
                   {activePrinciple.interactivePrompt}
                 </p>
 
-                <div className="p-5 rounded-2xl bg-stone-950 border border-white/10 flex flex-col items-center justify-center text-center space-y-3">
+                <div className="p-5 rounded-2xl bg-[#1c1816] border border-white/10 flex flex-col items-center justify-center text-center space-y-3">
                   <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
@@ -443,7 +443,7 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
                     <h4 className="text-sm font-bold text-white mb-1">
                       Target Component: {activePrinciple.component}
                     </h4>
-                    <p className="text-xs text-stone-400 max-w-sm">
+                    <p className="text-xs text-white/50 max-w-sm">
                       {activePrinciple.implementation}
                     </p>
                   </div>
@@ -462,7 +462,7 @@ export function DemonstrationMode({ activePrinciple, onClose }) {
           </div>
 
           {/* Bottom Evaluation Note */}
-          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
+          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
             <span>HCI Usability Lab Benchmark v2.0</span>
             <span className="text-amber-300 font-medium">Evaluation Criterion Met ✓</span>
           </div>

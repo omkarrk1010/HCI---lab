@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ENVIRONMENTS } from '../data/environments';
-import { 
+import {
   Sparkles, 
   Mail, 
   Lock, 
@@ -38,9 +37,6 @@ export function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
-  // Background atmosphere
-  const bgEnv = ENVIRONMENTS[0];
 
   // Helper email validation
   const isValidEmail = (val) => {
@@ -178,44 +174,34 @@ export function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-hidden selection:bg-amber-500/30">
-      {/* Background Atmosphere Image with Dimming Overlay */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105 pointer-events-none"
-        style={{
-          backgroundImage: bgEnv?.imageUrl ? `url(${bgEnv.imageUrl})` : undefined,
-          background: !bgEnv?.imageUrl ? bgEnv?.fallbackGradient : undefined
-        }}
-      />
-      <div className="fixed inset-0 bg-stone-950/75 backdrop-blur-[8px] pointer-events-none" />
-
+    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-hidden selection:bg-amber-300/40 bg-gradient-to-br from-amber-50 via-stone-50 to-sky-50">
       {/* Main Authentication Card */}
-      <div className="relative w-full max-w-[460px] rounded-3xl glass-panel bg-stone-900/80 border border-white/15 shadow-2xl p-6 sm:p-8 z-10 animate-fadeIn backdrop-blur-xl">
-        
+      <div className="relative w-full max-w-[460px] rounded-3xl glass-panel-light border border-stone-900/10 shadow-2xl p-6 sm:p-8 z-10 animate-fadeIn backdrop-blur-xl">
+
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/30 mb-3">
-            <Sparkles className="w-6 h-6 text-stone-950" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-3">
+            <Sparkles className="w-6 h-6 text-stone-50" />
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-2xl tracking-tight text-white">StudyScape</span>
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <span className="font-extrabold text-2xl tracking-tight text-stone-800">StudyScape</span>
+            <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-100 text-amber-700 border border-amber-300/50">
               Pro
             </span>
           </div>
-          <p className="text-xs text-amber-400/90 font-medium mt-0.5">Find your space. Find your focus.</p>
+          <p className="text-xs text-amber-600/90 font-medium mt-0.5">Find your space. Find your focus.</p>
         </div>
 
         {/* Mode Switcher Tabs (Sign In / Create Account) */}
         {mode !== 'forgot' && (
-          <div className="flex items-center gap-2 p-1 rounded-2xl bg-stone-950/70 border border-white/10 mb-6 w-full">
+          <div className="flex items-center gap-2 p-1 rounded-2xl bg-stone-900/5 border border-stone-900/10 mb-6 w-full">
             <button
               type="button"
               onClick={() => switchMode('login')}
               className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
                 mode === 'login'
                   ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md shadow-amber-500/20'
-                  : 'text-stone-300 hover:text-white'
+                  : 'text-stone-500 hover:text-stone-800'
               }`}
             >
               Sign In
@@ -226,7 +212,7 @@ export function AuthPage() {
               className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
                 mode === 'signup'
                   ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 shadow-md shadow-amber-500/20'
-                  : 'text-stone-300 hover:text-white'
+                  : 'text-stone-500 hover:text-stone-800'
               }`}
             >
               Create Account
@@ -236,7 +222,7 @@ export function AuthPage() {
 
         {/* Form Title & Subtitle */}
         <div className="mb-5">
-          <h2 className="text-xl sm:text-2xl font-black text-white">
+          <h2 className="text-xl sm:text-2xl font-black text-stone-800">
             {mode === 'login' && 'Welcome back'}
             {mode === 'signup' && 'Create your account'}
             {mode === 'forgot' && 'Reset your password'}
@@ -250,18 +236,18 @@ export function AuthPage() {
 
         {/* Feedback Banners */}
         {errorMessage && (
-          <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-start gap-2.5 animate-fadeIn">
-            <AlertCircle className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
-            <div className="text-xs text-rose-200 leading-relaxed font-medium">
+          <div className="mb-4 p-3 rounded-2xl bg-rose-100 border border-rose-300/50 flex items-start gap-2.5 animate-fadeIn">
+            <AlertCircle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
+            <div className="text-xs text-rose-700 leading-relaxed font-medium">
               {errorMessage}
             </div>
           </div>
         )}
 
         {successMessage && (
-          <div className="mb-4 p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-start gap-2.5 animate-fadeIn">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-            <div className="text-xs text-emerald-200 leading-relaxed font-medium">
+          <div className="mb-4 p-3 rounded-2xl bg-emerald-100 border border-emerald-300/50 flex items-start gap-2.5 animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+            <div className="text-xs text-emerald-700 leading-relaxed font-medium">
               {successMessage}
             </div>
           </div>
@@ -271,7 +257,7 @@ export function AuthPage() {
         {mode === 'login' && (
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1.5" htmlFor="login-email">
+              <label className="block text-xs font-semibold text-stone-600 mb-1.5" htmlFor="login-email">
                 Email Address
               </label>
               <div className="relative">
@@ -284,14 +270,14 @@ export function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="block text-xs font-semibold text-stone-300" htmlFor="login-password">
+                <label className="block text-xs font-semibold text-stone-600" htmlFor="login-password">
                   Password
                 </label>
                 <button
@@ -312,7 +298,7 @@ export function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-mono"
+                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all font-mono"
                 />
                 <button
                   type="button"
@@ -331,9 +317,9 @@ export function AuthPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/20 bg-stone-950 text-amber-500 focus:ring-amber-500/40 focus:ring-offset-stone-900 accent-amber-500"
+                  className="w-4 h-4 rounded border-stone-900/15 bg-white text-amber-500 focus:ring-amber-400/40 focus:ring-offset-white accent-amber-500"
                 />
-                <span className="text-xs text-stone-300 font-medium">Keep me signed in</span>
+                <span className="text-xs text-stone-600 font-medium">Keep me signed in</span>
               </label>
             </div>
 
@@ -372,7 +358,7 @@ export function AuthPage() {
         {mode === 'signup' && (
           <form onSubmit={handleSignupSubmit} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1" htmlFor="signup-name">
+              <label className="block text-xs font-semibold text-stone-600 mb-1" htmlFor="signup-name">
                 Full Name
               </label>
               <div className="relative">
@@ -385,13 +371,13 @@ export function AuthPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Alex Mercer"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1" htmlFor="signup-email">
+              <label className="block text-xs font-semibold text-stone-600 mb-1" htmlFor="signup-email">
                 Email Address
               </label>
               <div className="relative">
@@ -404,13 +390,13 @@ export function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="alex@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1" htmlFor="signup-password">
+              <label className="block text-xs font-semibold text-stone-600 mb-1" htmlFor="signup-password">
                 Password (min. 8 characters)
               </label>
               <div className="relative">
@@ -423,7 +409,7 @@ export function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-mono"
+                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all font-mono"
                 />
                 <button
                   type="button"
@@ -440,9 +426,9 @@ export function AuthPage() {
                 <div className="mt-2 space-y-1">
                   <div className="flex items-center justify-between text-[10px]">
                     <span className="text-stone-400">Password strength:</span>
-                    <span className="font-semibold text-stone-300">{passwordStrength.label}</span>
+                    <span className="font-semibold text-stone-600">{passwordStrength.label}</span>
                   </div>
-                  <div className="h-1.5 w-full bg-stone-800 rounded-full overflow-hidden flex gap-1">
+                  <div className="h-1.5 w-full bg-stone-200 rounded-full overflow-hidden flex gap-1">
                     <div className={`h-full flex-1 rounded-full ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-transparent'}`} />
                     <div className={`h-full flex-1 rounded-full ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-transparent'}`} />
                     <div className={`h-full flex-1 rounded-full ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-transparent'}`} />
@@ -453,7 +439,7 @@ export function AuthPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1" htmlFor="signup-confirm">
+              <label className="block text-xs font-semibold text-stone-600 mb-1" htmlFor="signup-confirm">
                 Confirm Password
               </label>
               <div className="relative">
@@ -466,7 +452,7 @@ export function AuthPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-mono"
+                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all font-mono"
                 />
                 <button
                   type="button"
@@ -522,7 +508,7 @@ export function AuthPage() {
         {mode === 'forgot' && (
           <form onSubmit={handleForgotSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1.5" htmlFor="forgot-email">
+              <label className="block text-xs font-semibold text-stone-600 mb-1.5" htmlFor="forgot-email">
                 Registered Email Address
               </label>
               <div className="relative">
@@ -535,7 +521,7 @@ export function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-white/10 text-white placeholder-stone-500 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-50 border border-stone-900/12 text-stone-800 placeholder-stone-400 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all"
                 />
               </div>
             </div>
@@ -562,7 +548,7 @@ export function AuthPage() {
               <button
                 type="button"
                 onClick={() => switchMode('login')}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-300 hover:text-white transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-stone-800 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Return to Sign In</span>
@@ -572,7 +558,7 @@ export function AuthPage() {
         )}
 
         {/* Security & Isolation Footnote */}
-        <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-2 text-stone-500 text-[11px]">
+        <div className="mt-6 pt-4 border-t border-stone-900/10 flex items-center justify-center gap-2 text-stone-400 text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400/80" />
           <span>
             {authProviderType === 'supabase' ? 'Supabase Auth Protected' : 'Encrypted Vault (Zero Plaintext)'}

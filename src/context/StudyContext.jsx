@@ -47,8 +47,17 @@ export function StudyProvider({ children }) {
     clockIs24Hour: false,
     showClockSeconds: true,
     reduceMotion: false,
-    theme: 'dark'
+    theme: 'light'
   });
+
+  const toggleDarkMode = () => {
+    setAppSettings(prev => ({ ...prev, theme: prev.theme === 'dark' ? 'light' : 'dark' }));
+  };
+
+  // Reflect the theme preference on <html> so the CSS dark-mode overrides apply
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', appSettings.theme === 'dark');
+  }, [appSettings.theme]);
 
   // --- Tasks State ---
   const [tasks, setTasks] = useState([]);
@@ -216,7 +225,7 @@ export function StudyProvider({ children }) {
             confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
           } catch {}
         }
-        return { ...t, completed: nextState };
+        return { ...t, completed: nextState, completedAt: nextState ? Date.now() : null };
       }
       return t;
     }));
@@ -541,6 +550,7 @@ export function StudyProvider({ children }) {
       // App Settings
       appSettings,
       setAppSettings,
+      toggleDarkMode,
 
       // Navigation
       currentTab,

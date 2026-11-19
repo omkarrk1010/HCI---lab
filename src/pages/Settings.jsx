@@ -17,7 +17,9 @@ import {
   ShieldCheck,
   User,
   LogOut,
-  KeyRound
+  KeyRound,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 export function Settings() {
@@ -25,8 +27,9 @@ export function Settings() {
   const { 
     pomodoroSettings, 
     setPomodoroSettings, 
-    appSettings, 
+    appSettings,
     setAppSettings,
+    toggleDarkMode,
     visualEffectsEnabled,
     setVisualEffectsEnabled,
     overlayOpacity,
@@ -83,24 +86,24 @@ export function Settings() {
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-fadeIn pb-16">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between p-5 rounded-3xl glass-panel-light">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-            <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">
               Preferences & Ergonomics
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-stone-800">
             Application Settings
           </h1>
-          <p className="text-xs text-stone-300">
+          <p className="text-xs text-stone-500">
             Customize timers, accessibility, visual atmospheric effects, and audio settings.
           </p>
         </div>
 
         {savedNotice && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold animate-fadeIn">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-300/50 text-xs font-semibold animate-fadeIn">
             <Check className="w-3.5 h-3.5" />
             <span>Saved</span>
           </div>
@@ -108,16 +111,16 @@ export function Settings() {
       </div>
 
       {/* 1. Pomodoro Timer Durations */}
-      <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <Clock className="w-4 h-4 text-amber-400" />
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-amber-500" />
           <span>Pomodoro Session Timing</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-white block">Focus Duration</span>
+              <span className="text-xs font-bold text-stone-800 block">Focus Duration</span>
               <span className="text-[11px] text-stone-400">Minutes per focus block</span>
             </div>
             <input
@@ -126,13 +129,13 @@ export function Settings() {
               max="120"
               value={pomodoroSettings.focusMinutes}
               onChange={(e) => handlePomoChange('focusMinutes', e.target.value)}
-              className="w-16 p-2 rounded-xl bg-stone-900 border border-white/15 text-white text-right font-mono-numbers text-xs"
+              className="w-16 p-2 rounded-xl bg-stone-50 border border-stone-900/15 text-stone-800 text-right font-mono-numbers text-xs"
             />
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-white block">Short Break</span>
+              <span className="text-xs font-bold text-stone-800 block">Short Break</span>
               <span className="text-[11px] text-stone-400">Minutes per short rest</span>
             </div>
             <input
@@ -141,13 +144,13 @@ export function Settings() {
               max="60"
               value={pomodoroSettings.shortBreakMinutes}
               onChange={(e) => handlePomoChange('shortBreakMinutes', e.target.value)}
-              className="w-16 p-2 rounded-xl bg-stone-900 border border-white/15 text-white text-right font-mono-numbers text-xs"
+              className="w-16 p-2 rounded-xl bg-stone-50 border border-stone-900/15 text-stone-800 text-right font-mono-numbers text-xs"
             />
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-white block">Long Break</span>
+              <span className="text-xs font-bold text-stone-800 block">Long Break</span>
               <span className="text-[11px] text-stone-400">Minutes per extended recovery</span>
             </div>
             <input
@@ -156,13 +159,13 @@ export function Settings() {
               max="90"
               value={pomodoroSettings.longBreakMinutes}
               onChange={(e) => handlePomoChange('longBreakMinutes', e.target.value)}
-              className="w-16 p-2 rounded-xl bg-stone-900 border border-white/15 text-white text-right font-mono-numbers text-xs"
+              className="w-16 p-2 rounded-xl bg-stone-50 border border-stone-900/15 text-stone-800 text-right font-mono-numbers text-xs"
             />
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold text-white block">Long Break Cycle</span>
+              <span className="text-xs font-bold text-stone-800 block">Long Break Cycle</span>
               <span className="text-[11px] text-stone-400">Sessions before long break</span>
             </div>
             <input
@@ -171,15 +174,15 @@ export function Settings() {
               max="12"
               value={pomodoroSettings.longBreakInterval}
               onChange={(e) => handlePomoChange('longBreakInterval', e.target.value)}
-              className="w-16 p-2 rounded-xl bg-stone-900 border border-white/15 text-white text-right font-mono-numbers text-xs"
+              className="w-16 p-2 rounded-xl bg-stone-50 border border-stone-900/15 text-stone-800 text-right font-mono-numbers text-xs"
             />
           </div>
         </div>
 
         {/* Auto Start Breaks Toggle */}
-        <div className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+        <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-900/4 border border-stone-900/6">
           <div>
-            <span className="text-xs font-bold text-white block">Auto-Start Breaks</span>
+            <span className="text-xs font-bold text-stone-800 block">Auto-Start Breaks</span>
             <span className="text-[11px] text-stone-400">
               Immediately start break timer when focus block concludes
             </span>
@@ -190,7 +193,7 @@ export function Settings() {
               triggerSaved();
             }}
             className={`w-12 h-7 rounded-full p-1 transition-colors ${
-              pomodoroSettings.autoStartBreaks ? 'bg-amber-500' : 'bg-stone-700'
+              pomodoroSettings.autoStartBreaks ? 'bg-amber-500' : 'bg-stone-300'
             }`}
           >
             <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
@@ -200,17 +203,42 @@ export function Settings() {
         </div>
       </section>
 
-      {/* 2. Clock & Display Formats */}
-      <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <Eye className="w-4 h-4 text-amber-400" />
+      {/* 2. Appearance */}
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+          {appSettings.theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-amber-500" />}
+          <span>Appearance</span>
+        </h3>
+
+        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
+          <div>
+            <span className="text-xs font-bold text-stone-800 block">Dark Mode</span>
+            <span className="text-[11px] text-stone-400">Switch the interface to a dark pastel theme</span>
+          </div>
+          <button
+            onClick={() => { toggleDarkMode(); triggerSaved(); }}
+            className={`w-12 h-7 rounded-full p-1 transition-colors ${
+              appSettings.theme === 'dark' ? 'bg-amber-500' : 'bg-stone-300'
+            }`}
+          >
+            <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
+              appSettings.theme === 'dark' ? 'translate-x-5' : 'translate-x-0'
+            }`} />
+          </button>
+        </div>
+      </section>
+
+      {/* 3. Clock & Display Formats */}
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+          <Eye className="w-4 h-4 text-amber-500" />
           <span>Clock & Accessibility</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/5">
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
             <div>
-              <span className="text-xs font-bold text-white block">24-Hour Military Format</span>
+              <span className="text-xs font-bold text-stone-800 block">24-Hour Military Format</span>
               <span className="text-[11px] text-stone-400">Toggle between 12h AM/PM and 24h</span>
             </div>
             <button
@@ -219,7 +247,7 @@ export function Settings() {
                 triggerSaved();
               }}
               className={`w-12 h-7 rounded-full p-1 transition-colors ${
-                appSettings.clockIs24Hour ? 'bg-amber-500' : 'bg-stone-700'
+                appSettings.clockIs24Hour ? 'bg-amber-500' : 'bg-stone-300'
               }`}
             >
               <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
@@ -228,9 +256,9 @@ export function Settings() {
             </button>
           </div>
 
-          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/5">
+          <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
             <div>
-              <span className="text-xs font-bold text-white block">Reduced Motion</span>
+              <span className="text-xs font-bold text-stone-800 block">Reduced Motion</span>
               <span className="text-[11px] text-stone-400">Disable rain streaks and dynamic steam</span>
             </div>
             <button
@@ -239,7 +267,7 @@ export function Settings() {
                 triggerSaved();
               }}
               className={`w-12 h-7 rounded-full p-1 transition-colors ${
-                appSettings.reduceMotion ? 'bg-amber-500' : 'bg-stone-700'
+                appSettings.reduceMotion ? 'bg-amber-500' : 'bg-stone-300'
               }`}
             >
               <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
@@ -251,15 +279,15 @@ export function Settings() {
       </section>
 
       {/* 3. Acoustic Test & Audio */}
-      <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <Volume2 className="w-4 h-4 text-amber-400" />
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+          <Volume2 className="w-4 h-4 text-amber-500" />
           <span>Acoustic Engine & Sound Test</span>
         </h3>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-stone-900/4 border border-stone-900/6">
           <div>
-            <span className="text-xs font-bold text-white block">Solfeggio Completion Bell</span>
+            <span className="text-xs font-bold text-stone-800 block">Solfeggio Completion Bell</span>
             <span className="text-[11px] text-stone-400">
               528Hz pure sine wave chime used for interval completion
             </span>
@@ -267,7 +295,7 @@ export function Settings() {
 
           <button
             onClick={() => soundEngine.playCompletionChime()}
-            className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-2 transition-all self-start sm:self-center"
+            className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-700 border border-amber-300/50 text-xs font-bold flex items-center gap-2 transition-all self-start sm:self-center"
           >
             <BellRing className="w-4 h-4" />
             <span>Test Sound Chime</span>
@@ -277,49 +305,49 @@ export function Settings() {
 
       {/* 4. Account & Authentication Profile */}
       {user && (
-        <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
+        <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <User className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+              <User className="w-4 h-4 text-amber-500" />
               <span>Account & Security Profile</span>
             </h3>
-            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-amber-100 text-amber-700 border border-amber-300/50">
               {authProviderType === 'supabase' ? 'Supabase Auth' : 'Encrypted Vault'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+            <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
               <span className="text-[11px] text-stone-400 block mb-0.5">Full Name</span>
-              <span className="text-xs font-bold text-white block">{user.name || 'Student'}</span>
+              <span className="text-xs font-bold text-stone-800 block">{user.name || 'Student'}</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+            <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
               <span className="text-[11px] text-stone-400 block mb-0.5">Email Address</span>
-              <span className="text-xs font-bold text-white block truncate">{user.email}</span>
+              <span className="text-xs font-bold text-stone-800 block truncate">{user.email}</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+            <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
               <span className="text-[11px] text-stone-400 block mb-0.5">Isolated Storage Key</span>
-              <span className="text-xs font-mono text-stone-300 block truncate">{user.id}</span>
+              <span className="text-xs font-mono text-stone-600 block truncate">{user.id}</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/5">
+            <div className="p-3.5 rounded-2xl bg-stone-900/4 border border-stone-900/6">
               <span className="text-[11px] text-stone-400 block mb-0.5">Security Architecture</span>
-              <span className="text-xs font-semibold text-emerald-300 block">
+              <span className="text-xs font-semibold text-emerald-600 block">
                 {authProviderType === 'supabase' ? 'Cloud Session with Row-Level Security' : 'PBKDF2 Salted Hashes (Zero Plaintext)'}
               </span>
             </div>
           </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-stone-900/10">
             <p className="text-xs text-stone-400">
               Your tasks, focus history, and study metrics are encrypted and isolated to this account.
             </p>
 
             <button
               onClick={() => logout()}
-              className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-2 transition-colors self-start sm:self-center"
+              className="px-4 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-600 border border-rose-300/50 text-xs font-bold flex items-center gap-2 transition-colors self-start sm:self-center"
             >
               <LogOut className="w-4 h-4" />
               <span>Log Out of StudyScape</span>
@@ -329,9 +357,9 @@ export function Settings() {
       )}
 
       {/* 5. Data Backup & Reset */}
-      <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-amber-400" />
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-amber-500" />
           <span>Data Privacy & Storage</span>
         </h3>
 
@@ -343,7 +371,7 @@ export function Settings() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleExportData}
-              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white flex items-center gap-2 transition-colors"
+              className="px-4 py-2 rounded-xl bg-stone-900/6 hover:bg-stone-900/12 text-xs font-semibold text-stone-700 flex items-center gap-2 transition-colors"
             >
               <Download className="w-4 h-4" />
               <span>Export JSON</span>
@@ -351,7 +379,7 @@ export function Settings() {
 
             <button
               onClick={handleResetDefaults}
-              className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-semibold flex items-center gap-2 transition-colors"
+              className="px-4 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-600 border border-rose-300/50 text-xs font-semibold flex items-center gap-2 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset Defaults</span>

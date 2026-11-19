@@ -59,19 +59,19 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
       label: 'Focus Session',
       color: '#d97706',
       icon: Flame,
-      badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+      badgeClass: 'bg-amber-100 text-amber-700 border-amber-300/50'
     },
     shortBreak: {
       label: 'Short Break',
       color: '#10b981',
       icon: Coffee,
-      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+      badgeClass: 'bg-emerald-100 text-emerald-600 border-emerald-300/50'
     },
     longBreak: {
       label: 'Long Rest',
       color: '#38bdf8',
       icon: Sparkles,
-      badgeClass: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+      badgeClass: 'bg-sky-100 text-sky-600 border-sky-300/50'
     }
   };
 
@@ -135,13 +135,13 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
     <div 
       id="pomodoro-timer-container"
       className={`relative flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
-        isImmersive 
+        isImmersive
           ? `p-4 sm:p-6 rounded-3xl ${
               shouldFadeControls
                 ? 'bg-black/10 border border-white/5 shadow-none backdrop-blur-[2px]'
-                : 'bg-stone-900/40 border border-white/10 shadow-2xl backdrop-blur-md'
+                : 'bg-black/40 border border-white/10 shadow-2xl backdrop-blur-md'
             }`
-          : 'p-6 sm:p-8 rounded-3xl glass-panel border border-white/10 shadow-2xl'
+          : 'p-6 sm:p-8 rounded-3xl bg-[#3c3633] border border-white/10 shadow-2xl'
       } ${
         isHighlighted ? 'hci-highlight ring-4 ring-amber-400' : ''
       }`}
@@ -169,7 +169,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               }`}
             />
           ))}
-          <span className="text-[11px] text-stone-400 font-mono-numbers ml-1">
+          <span className="text-[11px] text-white/50 font-mono-numbers ml-1">
             {pomoCycleCount}/{pomodoroSettings.longBreakInterval}
           </span>
         </div>
@@ -224,7 +224,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
           } font-black tracking-tight text-white font-mono-numbers drop-shadow-lg`}>
             {formatSeconds(pomoRemainingSeconds)}
           </span>
-          <span className={`text-[10px] sm:text-xs font-semibold tracking-wider text-stone-300 mt-1 uppercase transition-opacity duration-700 ${
+          <span className={`text-[10px] sm:text-xs font-semibold tracking-wider text-white/60 mt-1 uppercase transition-opacity duration-700 ${
             shouldFadeControls ? 'opacity-0' : 'opacity-80'
           }`}>
             {pomoIsRunning ? (isImmersive ? '' : 'Time Remaining') : 'Ready'}
@@ -250,7 +250,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
             className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
               pomodoroSettings.focusMinutes === mins
                 ? 'bg-amber-400 text-stone-950 shadow-md scale-105'
-                : 'bg-white/5 text-stone-300 hover:text-white hover:bg-white/10'
+                : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
             } ${pomoIsRunning ? 'opacity-40 cursor-not-allowed' : ''}`}
             title={`Set focus duration to ${mins} minutes`}
           >
@@ -268,7 +268,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
         {/* Reset Button with Error Prevention */}
         <button
           onClick={handleResetRequest}
-          className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 transition-all hover:scale-105 active:scale-95"
+          className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 transition-all hover:scale-105 active:scale-95"
           title="Reset current timer session"
           aria-label="Reset timer"
         >
@@ -279,7 +279,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
         <button
           id="pomo-main-btn"
           onClick={pomoIsRunning ? pausePomo : startPomo}
-          className={`w-18 h-18 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center text-stone-950 font-bold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 ${
+          className={`w-18 h-18 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center text-[#1c1816] font-bold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 ${
             pomoIsRunning
               ? 'bg-amber-400 hover:bg-amber-300 shadow-amber-400/30'
               : 'bg-white hover:bg-amber-200 shadow-white/20'
@@ -287,16 +287,16 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
           aria-label={pomoIsRunning ? 'Pause Timer' : 'Start Focus Session'}
         >
           {pomoIsRunning ? (
-            <Pause className="w-8 h-8 fill-stone-950" />
+            <Pause className="w-8 h-8 fill-[#1c1816]" />
           ) : (
-            <Play className="w-8 h-8 fill-stone-950 translate-x-0.5" />
+            <Play className="w-8 h-8 fill-[#1c1816] translate-x-0.5" />
           )}
         </button>
 
         {/* Skip to Next Phase */}
         <button
           onClick={skipPomoPhase}
-          className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 transition-all hover:scale-105 active:scale-95"
+          className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 transition-all hover:scale-105 active:scale-95"
           title="Skip to next phase"
           aria-label="Skip phase"
         >
@@ -310,7 +310,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
           ? 'opacity-0 pointer-events-none translate-y-2 max-h-0 mt-0 pt-0 border-transparent overflow-hidden' 
           : 'opacity-100 translate-y-0 max-h-36'
       }`}>
-        <div className="flex items-center justify-between text-xs text-stone-400">
+        <div className="flex items-center justify-between text-xs text-white/50">
           <span className="flex items-center gap-1.5 font-medium">
             <Target className="w-3.5 h-3.5 text-amber-400" />
             <span>Target Task</span>
@@ -331,19 +331,19 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               <span className={`w-2 h-2 rounded-full ${
                 activeTask.priority === 'High' ? 'bg-rose-400' : activeTask.priority === 'Medium' ? 'bg-amber-400' : 'bg-emerald-400'
               }`} />
-              <span className="text-stone-200 font-medium truncate">{activeTask.title}</span>
+              <span className="text-white font-medium truncate">{activeTask.title}</span>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] bg-white/10 text-stone-300 font-semibold uppercase">
+            <span className="px-2 py-0.5 rounded text-[10px] bg-white/10 text-white/70 font-semibold uppercase">
               {activeTask.subject}
             </span>
           </div>
         ) : (
-          <div className="p-2.5 rounded-xl bg-white/5 border border-dashed border-white/15 text-xs text-stone-400 flex items-center justify-between">
+          <div className="p-2.5 rounded-xl bg-white/5 border border-dashed border-white/15 text-xs text-white/50 flex items-center justify-between">
             <span>No task selected for this focus session</span>
             {tasks.length > 0 && (
               <select
                 onChange={(e) => setActiveTaskId(e.target.value)}
-                className="bg-stone-800 text-stone-200 rounded px-2 py-1 text-xs border border-white/10 cursor-pointer"
+                className="bg-[#3c3633] text-white rounded px-2 py-1 text-xs border border-white/10 cursor-pointer"
                 defaultValue=""
               >
                 <option value="" disabled>Select task...</option>
@@ -358,10 +358,10 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
 
       {/* --- Error Prevention Confirmation Modal --- */}
       {showResetConfirm && (
-        <div className="absolute inset-0 bg-stone-950/80 backdrop-blur-md rounded-3xl p-6 flex flex-col items-center justify-center text-center z-30 animate-fadeIn border border-amber-500/30">
+        <div className="absolute inset-0 bg-[#1c1816]/80 backdrop-blur-md rounded-3xl p-6 flex flex-col items-center justify-center text-center z-30 animate-fadeIn border border-amber-500/30">
           <AlertTriangle className="w-12 h-12 text-amber-400 mb-2" />
           <h4 className="text-base font-bold text-white mb-1">Reset Active Session?</h4>
-          <p className="text-xs text-stone-300 mb-4 max-w-xs">
+          <p className="text-xs text-white/70 mb-4 max-w-xs">
             You still have {formatSeconds(pomoRemainingSeconds)} remaining. Resetting will cancel your progress.
           </p>
           <div className="flex items-center gap-3">
@@ -383,7 +383,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
 
       {/* --- Custom Duration Settings Modal --- */}
       {showCustomSettings && (
-        <div className="absolute inset-0 bg-stone-950/90 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between z-30 animate-fadeIn border border-white/20">
+        <div className="absolute inset-0 bg-[#1c1816]/90 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between z-30 animate-fadeIn border border-white/20">
           <div>
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-sm font-bold text-white flex items-center gap-2">
@@ -392,7 +392,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               </h4>
               <button
                 onClick={() => setShowCustomSettings(false)}
-                className="text-stone-400 hover:text-white text-xs"
+                className="text-white/50 hover:text-white text-xs"
               >
                 Cancel
               </button>
@@ -406,7 +406,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
 
             <form onSubmit={handleSaveSettings} className="space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <label className="text-stone-300">Focus Duration (min):</label>
+                <label className="text-white/70">Focus Duration (min):</label>
                 <input
                   type="number"
                   min="1"
@@ -418,7 +418,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <label className="text-stone-300">Short Break (min):</label>
+                <label className="text-white/70">Short Break (min):</label>
                 <input
                   type="number"
                   min="1"
@@ -430,7 +430,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <label className="text-stone-300">Long Break (min):</label>
+                <label className="text-white/70">Long Break (min):</label>
                 <input
                   type="number"
                   min="1"
@@ -442,7 +442,7 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <label className="text-stone-300">Long Break Interval:</label>
+                <label className="text-white/70">Long Break Interval:</label>
                 <input
                   type="number"
                   min="1"
@@ -466,14 +466,14 @@ export function PomodoroTimer({ size = 'large', isImmersive = false, controlsVis
 
       {/* --- Session Closure Dialog (Shneiderman Rule 4: Yield Closure) --- */}
       {pomoSessionCompletionNotice && (
-        <div className="absolute inset-0 bg-stone-950/90 backdrop-blur-lg rounded-3xl p-6 flex flex-col items-center justify-center text-center z-40 animate-fadeIn border border-amber-400/40">
+        <div className="absolute inset-0 bg-[#1c1816]/90 backdrop-blur-lg rounded-3xl p-6 flex flex-col items-center justify-center text-center z-40 animate-fadeIn border border-amber-400/40">
           <div className="w-12 h-12 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-400 mb-3 shadow-lg shadow-amber-400/20">
             <CheckCircle2 className="w-7 h-7" />
           </div>
           <h3 className="text-lg font-extrabold text-white mb-1">
             {pomoSessionCompletionNotice.title}
           </h3>
-          <p className="text-xs text-stone-300 max-w-xs mb-5">
+          <p className="text-xs text-white/70 max-w-xs mb-5">
             {pomoSessionCompletionNotice.message}
           </p>
           <div className="flex items-center gap-3">

@@ -108,22 +108,22 @@ export function FocusSessions({ onOpenAudioMixer }) {
         {/* Back / Exit Focus Button */}
         <button
           onClick={() => setCurrentTab('dashboard')}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-stone-900/60 hover:bg-stone-900/90 text-stone-300 hover:text-white border border-white/10 text-xs font-semibold backdrop-blur-md transition-all hover:scale-105 active:scale-95 shadow-lg group"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#2a2523]/70 hover:bg-[#2a2523]/95 text-white/70 hover:text-white border border-white/10 text-xs font-semibold backdrop-blur-md transition-all hover:scale-105 active:scale-95 shadow-lg group"
           title="Exit Focus Mode (Esc)"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           <span>Exit Focus Mode</span>
-          <span className="hidden sm:inline text-[10px] text-stone-500 font-mono-numbers">(Esc)</span>
+          <span className="hidden sm:inline text-[10px] text-white/40 font-mono-numbers">(Esc)</span>
         </button>
 
         {/* Minimal Mode Switcher: Timer vs Clock */}
-        <div className="flex items-center p-1 rounded-2xl bg-stone-900/60 border border-white/10 backdrop-blur-md shadow-lg">
+        <div className="flex items-center p-1 rounded-2xl bg-[#2a2523]/70 border border-white/10 backdrop-blur-md shadow-lg">
           <button
             onClick={() => setFocusView('timer')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               focusView === 'timer'
                 ? 'bg-amber-400 text-stone-950 shadow-md'
-                : 'text-stone-400 hover:text-white'
+                : 'text-white/50 hover:text-white'
             }`}
           >
             <Flame className="w-3.5 h-3.5" />
@@ -134,8 +134,8 @@ export function FocusSessions({ onOpenAudioMixer }) {
             onClick={() => setFocusView('clock')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
               focusView === 'clock'
-                ? 'bg-white text-stone-950 shadow-md'
-                : 'text-stone-400 hover:text-white'
+                ? 'bg-white text-[#1c1816] shadow-md'
+                : 'text-white/50 hover:text-white'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export function FocusSessions({ onOpenAudioMixer }) {
         <div className="flex items-center gap-2 relative">
           <button
             onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-            className="p-2 rounded-2xl bg-stone-900/60 hover:bg-stone-900/90 text-stone-300 hover:text-white border border-white/10 backdrop-blur-md transition-all"
+            className="p-2 rounded-2xl bg-[#2a2523]/70 hover:bg-[#2a2523]/95 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-all"
             title="Volume Control"
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -158,7 +158,7 @@ export function FocusSessions({ onOpenAudioMixer }) {
             className={`p-2 rounded-2xl border backdrop-blur-md transition-all ${
               isMuted
                 ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                : 'bg-stone-900/60 text-stone-300 hover:text-white border border-white/10'
+                : 'bg-[#2a2523]/70 text-white/70 hover:text-white border border-white/10'
             }`}
             title={isMuted ? 'Unmute (M)' : 'Mute (M)'}
           >
@@ -167,8 +167,8 @@ export function FocusSessions({ onOpenAudioMixer }) {
 
           {/* Quick Volume Slider Popover */}
           {showVolumeSlider && (
-            <div className="absolute right-0 top-12 w-48 p-3 rounded-2xl bg-stone-950/90 border border-white/15 backdrop-blur-lg shadow-2xl animate-fadeIn z-50">
-              <div className="flex justify-between items-center text-[11px] font-bold text-stone-300 mb-2">
+            <div className="absolute right-0 top-12 w-48 p-3 rounded-2xl bg-[#1c1816]/95 border border-white/15 backdrop-blur-lg shadow-2xl animate-fadeIn z-50">
+              <div className="flex justify-between items-center text-[11px] font-bold text-white/70 mb-2">
                 <span>Sound Level</span>
                 <span className="text-amber-400 font-mono-numbers">{Math.round(masterVolume * 100)}%</span>
               </div>
@@ -179,7 +179,7 @@ export function FocusSessions({ onOpenAudioMixer }) {
                 step="0.05"
                 value={isMuted ? 0 : masterVolume}
                 onChange={(e) => handleMasterVolumeChange(parseFloat(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                className="w-full accent-amber-500 cursor-pointer h-1.5 bg-white/10 rounded-lg"
               />
             </div>
           )}
@@ -200,14 +200,14 @@ export function FocusSessions({ onOpenAudioMixer }) {
       </div>
 
       {/* Minimal Bottom Environment Tagline - Smoothly fades during active focus */}
-      <div 
-        className={`w-full text-center text-xs text-stone-400/80 font-medium z-30 pointer-events-none transition-all duration-700 ease-in-out ${
-          pomoIsRunning && !controlsVisible 
-            ? 'opacity-0 translate-y-4' 
+      <div
+        className={`w-full text-center text-xs text-white/60 font-medium z-30 pointer-events-none transition-all duration-700 ease-in-out ${
+          pomoIsRunning && !controlsVisible
+            ? 'opacity-0 translate-y-4'
             : 'opacity-100 translate-y-0'
         }`}
       >
-        <span className="px-3 py-1 rounded-full bg-stone-950/30 backdrop-blur-sm border border-white/5">
+        <span className="px-3 py-1 rounded-full bg-[#1c1816]/30 backdrop-blur-sm border border-white/5">
           {currentEnvironment.name} • {currentEnvironment.tagline}
         </span>
       </div>

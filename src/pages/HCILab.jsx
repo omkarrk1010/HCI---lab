@@ -37,18 +37,18 @@ export function HCILab() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fadeIn pb-20">
       {/* HCI Academic Header */}
-      <section className="p-6 sm:p-8 rounded-3xl glass-panel border border-amber-500/30 shadow-2xl relative overflow-hidden">
+      <section className="p-6 sm:p-8 rounded-3xl glass-panel border border-amber-400/40 shadow-2xl relative overflow-hidden">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold border border-amber-300/50">
             <GraduationCap className="w-4 h-4" />
             <span>Academic Evaluation Center • Human-Computer Interaction (HCI)</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black text-stone-800 tracking-tight">
             StudyScape HCI Lab & Usability Laboratory
           </h1>
 
-          <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-500 leading-relaxed">
             This module provides empirical demonstrations of <strong>Don Norman’s Design Principles</strong>, <strong>Ben Shneiderman’s Eight Golden Rules</strong>, and <strong>Cognitive Psychology Ergonomics</strong>. Each principle is grounded in real, testable user interface components.
           </p>
 
@@ -84,7 +84,7 @@ export function HCILab() {
             className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory === 'all'
                 ? 'bg-amber-500 text-stone-950 shadow-md shadow-amber-500/20'
-                : 'bg-white/5 text-stone-300 hover:text-white hover:bg-white/10'
+                : 'bg-stone-900/5 text-stone-500 hover:text-stone-800 hover:bg-stone-900/10'
             }`}
           >
             All Principles ({HCI_PRINCIPLES.length})
@@ -97,7 +97,7 @@ export function HCILab() {
               className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCategory === cat.id
                   ? 'bg-amber-500 text-stone-950 shadow-md shadow-amber-500/20'
-                  : 'bg-white/5 text-stone-300 hover:text-white hover:bg-white/10'
+                  : 'bg-stone-900/5 text-stone-500 hover:text-stone-800 hover:bg-stone-900/10'
               }`}
             >
               {cat.label}
@@ -113,7 +113,7 @@ export function HCILab() {
             placeholder="Search principles or laws..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-stone-900/80 border border-white/15 text-xs text-white placeholder:text-stone-500 focus:outline-none focus:border-amber-400"
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-stone-50 border border-stone-900/12 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-amber-400"
           />
         </div>
       </div>
@@ -131,58 +131,58 @@ export function HCILab() {
       </div>
 
       {/* HCI Evaluation Framework Matrix Table */}
-      <section className="p-6 rounded-3xl glass-card border border-white/10 space-y-4">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-amber-400" />
+      <section className="p-6 rounded-3xl glass-card border border-stone-900/10 space-y-4">
+        <h3 className="text-base font-bold text-stone-800 flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-amber-500" />
           <span>Academic Evaluation Matrix: Theoretical Alignment</span>
         </h3>
-        <p className="text-xs text-stone-300">
+        <p className="text-xs text-stone-500">
           Summary mapping for presentation grading and oral defense:
         </p>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-stone-300">
+          <table className="w-full text-left text-xs text-stone-500">
             <thead>
-              <tr className="border-b border-white/10 text-[11px] font-bold uppercase text-stone-400">
+              <tr className="border-b border-stone-900/10 text-[11px] font-bold uppercase text-stone-400">
                 <th className="py-2.5 px-3">Framework</th>
                 <th className="py-2.5 px-3">Principle</th>
                 <th className="py-2.5 px-3">Interface Component</th>
                 <th className="py-2.5 px-3">Empirical Evaluation Criterion</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-stone-900/6">
               <tr>
-                <td className="py-2 px-3 font-semibold text-amber-300">Norman</td>
+                <td className="py-2 px-3 font-semibold text-amber-600">Norman</td>
                 <td className="py-2 px-3">Discoverability</td>
                 <td className="py-2 px-3">Primary Action Cluster</td>
                 <td className="py-2 px-3 text-stone-400">Immediate visibility of timer play/pause buttons</td>
               </tr>
               <tr>
-                <td className="py-2 px-3 font-semibold text-amber-300">Norman</td>
+                <td className="py-2 px-3 font-semibold text-amber-600">Norman</td>
                 <td className="py-2 px-3">Feedback</td>
                 <td className="py-2 px-3">SVG Progress Ring & Solfeggio Chime</td>
                 <td className="py-2 px-3 text-stone-400">Continuous visible progression and acoustic closure confirmation</td>
               </tr>
               <tr>
-                <td className="py-2 px-3 font-semibold text-sky-300">Shneiderman</td>
+                <td className="py-2 px-3 font-semibold text-sky-600">Shneiderman</td>
                 <td className="py-2 px-3">Prevent Errors</td>
                 <td className="py-2 px-3">Duration Validator & Reset Guard</td>
                 <td className="py-2 px-3 text-stone-400">Rejects invalid ranges and confirms accidental resets</td>
               </tr>
               <tr>
-                <td className="py-2 px-3 font-semibold text-sky-300">Shneiderman</td>
+                <td className="py-2 px-3 font-semibold text-sky-600">Shneiderman</td>
                 <td className="py-2 px-3">User Control</td>
                 <td className="py-2 px-3">Environment Cross-Switching</td>
                 <td className="py-2 px-3 text-stone-400">Timer preservation during background/audio switches</td>
               </tr>
               <tr>
-                <td className="py-2 px-3 font-semibold text-emerald-300">Cognitive Law</td>
+                <td className="py-2 px-3 font-semibold text-emerald-600">Cognitive Law</td>
                 <td className="py-2 px-3">Fitts's Law</td>
                 <td className="py-2 px-3">72px Centered Start Button</td>
                 <td className="py-2 px-3 text-stone-400">Minimized target distance and maximized click surface</td>
               </tr>
               <tr>
-                <td className="py-2 px-3 font-semibold text-emerald-300">Cognitive Law</td>
+                <td className="py-2 px-3 font-semibold text-emerald-600">Cognitive Law</td>
                 <td className="py-2 px-3">Hick's Law</td>
                 <td className="py-2 px-3">6-Environment Curation Grid</td>
                 <td className="py-2 px-3 text-stone-400">Reduces choice complexity from infinite dials to 6 high-signal choices</td>

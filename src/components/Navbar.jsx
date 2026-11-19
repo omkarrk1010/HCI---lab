@@ -16,8 +16,10 @@ import {
   Target,
   LogOut,
   User,
-  ShieldCheck,
-  ChevronDown
+  Hourglass,
+  Fingerprint,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 export function Navbar({ onOpenAudioMixer }) {
@@ -30,30 +32,30 @@ export function Navbar({ onOpenAudioMixer }) {
     toggleMute,
     overlayOpacity,
     setOverlayOpacity,
-    hciDemoState
+    hciDemoState,
+    appSettings,
+    toggleDarkMode
   } = useStudy();
 
-  const { user, logout, authProviderType } = useAuth();
+  const isDark = appSettings.theme === 'dark';
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showBrightnessPopover, setShowBrightnessPopover] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const userMenuRef = useRef(null);
+  const { user, logout } = useAuth();
 
-  // Close user profile dropdown on click outside
+  const [menuOpen, setMenuOpen] = useState(false);
+  const drawerRef = useRef(null);
+
+  // Close the drawer on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
-        setShowUserMenu(false);
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) {
+        setMenuOpen(false);
       }
     };
-    if (showUserMenu) {
+    if (menuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showUserMenu]);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
 
   const getInitials = (name, email) => {
     if (name && typeof name === 'string' && name.trim()) {
@@ -85,6 +87,8 @@ export function Navbar({ onOpenAudioMixer }) {
     { id: 'dashboard', label: 'Study Room', icon: Clock },
     { id: 'focus', label: 'Focus Sessions', icon: Target },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'procrastination', label: 'Procrastination AI', icon: Hourglass },
+    { id: 'personality', label: 'Study Personality', icon: Fingerprint },
     { id: 'environments', label: 'Environments', icon: Compass },
     { id: 'hci', label: 'HCI Lab', icon: GraduationCap },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -92,35 +96,135 @@ export function Navbar({ onOpenAudioMixer }) {
 
   const handleNavClick = (tabId) => {
     setCurrentTab(tabId);
-    setMobileMenuOpen(false);
+    setMenuOpen(false);
   };
 
   const isAudioActive = activeSounds.length > 0 && !isMuted;
 
   return (
-    <header className="sticky top-0 z-40 w-full px-4 sm:px-6 py-3 transition-all">
-      <div className="max-w-7xl mx-auto rounded-2xl glass-panel px-4 sm:px-6 py-2.5 flex items-center justify-between border border-white/10 shadow-xl">
-        {/* Brand Logo & Tagline */}
-        <div
-          onClick={() => handleNavClick('dashboard')}
-          className="flex items-center gap-3 cursor-pointer group"
-          role="button"
-          tabIndex={0}
-          aria-label="Go to Study Room"
-        >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-            <Sparkles className="w-5 h-5 text-stone-900" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white group-hover:text-amber-200 transition-colors">
+    <header className="sticky top-0 z-50 w-full px-4 sm:px-6 py-3">
+      {/* Minimal Top Bar */}
+      <div className="max-w-7xl mx-auto rounded-2xl glass-panel px-3 sm:px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          {/* Hamburger Menu Trigger */}
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="p-2.5 rounded-xl bg-stone-900/5 text-stone-700 hover:text-stone-900 hover:bg-stone-900/10 transition-colors"
+            aria-label="Open navigation menu"
+            aria-expanded={menuOpen}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Brand */}
+          <button
+            onClick={() => handleNavClick('dashboard')}
+            className="flex items-center gap-2.5 group"
+            aria-label="Go to Study Room"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+              <Sparkles className="w-4 h-4 text-stone-50" />
+            </div>
+            <span className="font-extrabold text-base sm:text-lg tracking-tight text-stone-800 hidden sm:inline">
               StudyScape
             </span>
-
-          </div>
+          </button>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
+        {/* Right Quick Controls — kept minimal */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2.5 rounded-xl bg-stone-900/5 text-stone-600 hover:bg-stone-900/10 hover:text-stone-900 transition-colors"
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label="Toggle dark mode"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
+          <button
+            onClick={onOpenAudioMixer}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+              isAudioActive
+                ? 'bg-amber-200/50 text-amber-700 border-amber-300/60'
+                : 'bg-stone-900/5 text-stone-600 border-transparent hover:bg-stone-900/10'
+            }`}
+            title="Open Ambient Audio Mixer"
+            aria-label="Ambient sound mixer"
+          >
+            {isMuted ? (
+              <VolumeX className="w-4 h-4 text-stone-400" />
+            ) : (
+              <Volume2 className={`w-4 h-4 ${isAudioActive ? 'text-amber-600' : 'text-stone-500'}`} />
+            )}
+            <span className="hidden sm:inline">
+              {activeSounds.length > 0 ? `${activeSounds.length}` : ''}
+            </span>
+          </button>
+
+          {user && (
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-50 to-amber-100 border border-amber-300/50 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0"
+              title={`Account: ${displayName}`}
+              aria-label="Open account menu"
+            >
+              {getInitials(user?.name, user?.email)}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Scrim */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-stone-900/20 backdrop-blur-sm z-40 animate-fadeIn"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Slide-in Navigation Drawer */}
+      <aside
+        ref={drawerRef}
+        className={`fixed top-0 left-0 h-full w-[85vw] max-w-[320px] z-50 glass-panel-light rounded-none sm:rounded-r-3xl flex flex-col transition-transform duration-300 ease-out ${
+          menuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        aria-hidden={!menuOpen}
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between p-4 border-b border-stone-900/6">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-sm">
+              <Sparkles className="w-4 h-4 text-stone-50" />
+            </div>
+            <span className="font-extrabold text-lg tracking-tight text-stone-800">StudyScape</span>
+          </div>
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="p-2 rounded-xl bg-stone-900/5 text-stone-600 hover:bg-stone-900/10"
+            aria-label="Close navigation menu"
+          >
+            <X className="w-4.5 h-4.5" />
+          </button>
+        </div>
+
+        {/* User Card */}
+        {user && (
+          <div className="p-4 pb-2">
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-stone-900/4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-50 to-amber-100 border border-amber-300/50 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">
+                {getInitials(user?.name, user?.email)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-bold text-stone-800 truncate">{displayName}</div>
+                <div className="text-[11px] text-stone-500 truncate">{user?.email}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Nav Links */}
+        <nav className="flex-1 overflow-y-auto px-4 py-2 space-y-1" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
@@ -130,259 +234,76 @@ export function Navbar({ onOpenAudioMixer }) {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all duration-200 ${isActive
-                  ? 'bg-white/15 text-white shadow-inner border border-white/15'
-                  : 'text-stone-300 hover:text-white hover:bg-white/5'
-                  } ${isHighlighted ? 'hci-highlight ring-2 ring-amber-400' : ''}`}
+                className={`w-full px-3.5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
+                  isActive
+                    ? 'bg-amber-200/50 text-amber-800'
+                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-900/5'
+                } ${isHighlighted ? 'hci-highlight ring-2 ring-amber-400' : ''}`}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-amber-300' : 'text-stone-400'}`} />
+                <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-amber-600' : 'text-stone-400'}`} />
                 <span>{item.label}</span>
-                {item.badge && (
-                  <span className="px-1.5 py-0.2 text-[9px] font-bold uppercase rounded bg-amber-500/25 text-amber-300">
-                    {item.badge}
-                  </span>
-                )}
               </button>
             );
           })}
         </nav>
 
-        {/* Right Quick Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Active Environment Pill */}
+        {/* Dark Mode Toggle */}
+        <div className="px-4 pt-3">
           <button
-            onClick={() => handleNavClick('environments')}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-stone-900/60 hover:bg-stone-800/80 border border-white/10 text-xs font-medium text-stone-200 transition-all hover:scale-102"
-            title="Switch Study Environment"
+            onClick={toggleDarkMode}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-stone-900/4 hover:bg-stone-900/8 transition-colors"
           >
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span className="truncate max-w-[110px]">{currentEnvironment.name}</span>
-          </button>
-
-          {/* Quick Overlay Brightness Slider Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowBrightnessPopover(!showBrightnessPopover)}
-              className={`p-2 rounded-xl border transition-all ${showBrightnessPopover
-                ? 'bg-white/20 text-white border-white/30'
-                : 'bg-stone-900/60 text-stone-300 border-white/10 hover:text-white hover:bg-stone-800'
-                }`}
-              title="Adjust Room Dimming / Brightness"
-              aria-label="Room overlay dimming"
-            >
-              <Sliders className="w-4 h-4" />
-            </button>
-
-            {showBrightnessPopover && (
-              <div className="absolute right-0 mt-2 w-56 p-3 rounded-2xl glass-panel shadow-2xl z-50 border border-white/15 animate-fadeIn">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-bold text-stone-200">Atmosphere Dimmer</span>
-                  <span className="text-xs text-amber-300 font-mono-numbers">
-                    {Math.round((1 - overlayOpacity) * 100)}% Light
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="0.85"
-                  step="0.05"
-                  value={overlayOpacity}
-                  onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
-                  className="w-full accent-amber-500 cursor-pointer"
-                  aria-label="Adjust background overlay opacity"
-                />
-                <div className="flex justify-between text-[10px] text-stone-400 mt-1">
-                  <span>Bright</span>
-                  <span>Cozy Dark</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Audio Quick Button */}
-          <button
-            onClick={onOpenAudioMixer}
-            className={`flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${isAudioActive
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-lg shadow-amber-500/10'
-              : 'bg-stone-900/60 text-stone-300 border-white/10 hover:text-white hover:bg-stone-800'
-              }`}
-            title="Open Ambient Audio Mixer"
-            aria-label="Ambient sound mixer"
-          >
-            {isMuted ? (
-              <VolumeX className="w-4 h-4 text-stone-400" />
-            ) : (
-              <Volume2 className={`w-4 h-4 ${isAudioActive ? 'text-amber-400' : 'text-stone-300'}`} />
-            )}
-            <span className="hidden sm:inline">
-              {activeSounds.length > 0 ? `${activeSounds.length} Sound${activeSounds.length > 1 ? 's' : ''}` : 'Ambience'}
+            <span className="text-xs font-semibold text-stone-600 flex items-center gap-2.5">
+              {isDark ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-stone-400" />}
+              <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+            </span>
+            <span className={`w-10 h-6 rounded-full p-1 transition-colors ${isDark ? 'bg-amber-500' : 'bg-stone-300'}`}>
+              <span className={`block w-4 h-4 rounded-full bg-white transition-transform ${isDark ? 'translate-x-4' : 'translate-x-0'}`} />
             </span>
           </button>
-
-          {/* User Profile Pill & Dropdown */}
-          {user && (
-            <div className="relative" ref={userMenuRef}>
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center gap-2.5 px-3 py-1.5 rounded-2xl border transition-all duration-200 select-none ${showUserMenu
-                  ? 'bg-amber-500/20 border-amber-500/40 text-white ring-2 ring-amber-400/20 shadow-lg shadow-amber-500/10'
-                  : 'bg-stone-900/70 border-white/10 text-stone-200 hover:text-white hover:bg-stone-800/80 hover:border-white/20 shadow-md'
-                  }`}
-                title={`Account: ${displayName} (${user?.email})`}
-                aria-label="User profile and account menu"
-                aria-expanded={showUserMenu}
-              >
-                {/* Proper Profile Avatar Circle */}
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-stone-800 to-stone-900 border border-amber-400/40 text-amber-300 flex items-center justify-center font-bold text-xs tracking-wider shadow-inner ring-1 ring-white/10 shrink-0">
-                  {getInitials(user?.name, user?.email)}
-                </div>
-
-                {/* Name Beside Avatar (Title Cased) */}
-                <span className="text-xs font-bold text-white max-w-[120px] sm:max-w-[140px] truncate leading-tight">
-                  {displayName}
-                </span>
-
-                <ChevronDown className={`w-3.5 h-3.5 text-stone-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180 text-amber-300' : ''}`} />
-              </button>
-
-              {/* Small Dropdown Menu with Profile, Settings, and Logout */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-64 p-3 rounded-2xl glass-panel shadow-2xl z-50 border border-white/15 animate-fadeIn">
-                  {/* User Profile Info Header */}
-                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-stone-800 to-stone-900 border border-amber-400/40 text-amber-300 flex items-center justify-center font-black text-xs shadow-md shrink-0">
-                      {getInitials(user?.name, user?.email)}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-white truncate">{displayName}</div>
-                      <div className="text-[11px] text-stone-400 truncate">{user?.email}</div>
-                    </div>
-                  </div>
-
-                  {/* Dropdown Options: Profile, Settings, Logout */}
-                  <div className="space-y-1 text-xs">
-                    {/* 1. Profile Option */}
-                    <button
-                      onClick={() => {
-                        setCurrentTab('settings');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-stone-200 hover:text-white flex items-center gap-2.5 text-left font-medium transition-colors"
-                    >
-                      <User className="w-4 h-4 text-amber-400" />
-                      <div className="flex-1">
-                        <span className="block font-semibold">Profile</span>
-                        <span className="block text-[10px] text-stone-400">View account & storage key</span>
-                      </div>
-                    </button>
-
-                    {/* 2. Settings Option */}
-                    <button
-                      onClick={() => {
-                        setCurrentTab('settings');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-stone-200 hover:text-white flex items-center gap-2.5 text-left font-medium transition-colors"
-                    >
-                      <Settings className="w-4 h-4 text-amber-400" />
-                      <div className="flex-1">
-                        <span className="block font-semibold">Settings</span>
-                        <span className="block text-[10px] text-stone-400">Timers & ergonomic preferences</span>
-                      </div>
-                    </button>
-                  </div>
-
-                  {/* 3. Logout Option */}
-                  <div className="pt-2 mt-2 border-t border-white/10">
-                    <button
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        logout();
-                      }}
-                      className="w-full px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 hover:text-rose-200 border border-rose-500/30 flex items-center gap-2.5 text-xs font-bold transition-all justify-center"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Logout of StudyScape</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Mobile Menu Toggle Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-stone-900/60 text-stone-200 border border-white/10"
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden mt-2 p-4 rounded-2xl glass-panel border border-white/15 shadow-2xl animate-fadeIn space-y-3">
-          {user && (
-            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-stone-800 to-stone-900 border border-amber-400/40 text-amber-300 flex items-center justify-center font-bold text-xs shadow-md shrink-0">
-                  {getInitials(user?.name, user?.email)}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-bold text-white truncate">{displayName}</div>
-                  <div className="text-[10px] text-stone-400 truncate">{user?.email}</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
-                <button
-                  onClick={() => {
-                    setCurrentTab('settings');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-200 text-xs font-semibold flex items-center gap-2 justify-center"
-                >
-                  <User className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Profile</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    logout();
-                  }}
-                  className="px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-2 justify-center"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`p-3 rounded-xl text-left text-xs font-bold flex items-center gap-2.5 transition-all ${isActive
-                    ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40'
-                    : 'bg-white/5 text-stone-300 hover:bg-white/10 hover:text-white'
-                    }`}
-                >
-                  <Icon className="w-4 h-4 text-amber-400" />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
+        {/* Atmosphere Dimmer */}
+        <div className="px-4 py-3 border-t border-stone-900/6">
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-[11px] font-bold text-stone-500 flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5" />
+              Atmosphere
+            </span>
+            <span className="text-[11px] text-amber-600 font-mono-numbers">
+              {Math.round((1 - overlayOpacity) * 100)}% Light
+            </span>
           </div>
+          <input
+            type="range"
+            min="0.1"
+            max="0.85"
+            step="0.05"
+            value={overlayOpacity}
+            onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
+            className="w-full accent-amber-500 cursor-pointer"
+            aria-label="Adjust background overlay opacity"
+          />
+          <p className="text-[11px] text-stone-400 mt-1 truncate">{currentEnvironment.name}</p>
         </div>
-      )}
+
+        {/* Logout */}
+        {user && (
+          <div className="p-4 pt-2">
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                logout();
+              }}
+              className="w-full px-3 py-2.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-600 flex items-center gap-2.5 text-xs font-bold transition-all justify-center"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout of StudyScape</span>
+            </button>
+          </div>
+        )}
+      </aside>
     </header>
   );
 }

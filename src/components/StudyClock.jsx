@@ -37,10 +37,10 @@ export function StudyClock() {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 rounded-3xl glass-card border border-white/10 text-center relative group">
+    <div className="flex flex-col items-center justify-center p-6 rounded-3xl glass-card border border-stone-900/10 text-center relative group">
       {/* Greeting & Date Header */}
-      <div className="flex items-center gap-2 text-stone-300 text-xs sm:text-sm font-medium mb-1">
-        <GreetingIcon className="w-4 h-4 text-amber-400" />
+      <div className="flex items-center gap-2 text-stone-600 text-xs sm:text-sm font-medium mb-1">
+        <GreetingIcon className="w-4 h-4 text-amber-500" />
         <span>{greeting.text}, ready to focus?</span>
       </div>
 
@@ -51,21 +51,21 @@ export function StudyClock() {
 
       {/* Main Digital Clock Display */}
       <div className="flex items-baseline justify-center gap-2 my-1">
-        <span className="text-5xl sm:text-7xl font-bold tracking-tight text-white font-mono-numbers drop-shadow-md">
+        <span className="text-5xl sm:text-7xl font-bold tracking-tight text-stone-800 font-mono-numbers drop-shadow-sm">
           {timeStr}
         </span>
         {period && (
-          <span className="text-xl sm:text-2xl font-bold text-amber-400 tracking-wider">
+          <span className="text-xl sm:text-2xl font-bold text-amber-500 tracking-wider">
             {period}
           </span>
         )}
       </div>
 
       {/* Clock Formatting Controls */}
-      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/10 text-xs text-stone-400">
+      <div className="flex items-center gap-2 mt-4 pt-3 border-t border-stone-900/10 text-xs text-stone-400">
         <button
           onClick={() => setAppSettings(prev => ({ ...prev, clockIs24Hour: !prev.clockIs24Hour }))}
-          className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 transition-colors font-medium"
+          className="px-2.5 py-1 rounded-lg bg-stone-900/5 hover:bg-stone-900/10 text-stone-600 transition-colors font-medium"
           aria-label="Toggle 12 or 24 hour clock format"
         >
           {appSettings.clockIs24Hour ? '24-Hour' : '12-Hour'}
@@ -73,7 +73,7 @@ export function StudyClock() {
 
         <button
           onClick={() => setAppSettings(prev => ({ ...prev, showClockSeconds: !prev.showClockSeconds }))}
-          className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 transition-colors flex items-center gap-1.5 font-medium"
+          className="px-2.5 py-1 rounded-lg bg-stone-900/5 hover:bg-stone-900/10 text-stone-600 transition-colors flex items-center gap-1.5 font-medium"
           aria-label="Toggle clock seconds display"
         >
           {appSettings.showClockSeconds ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}

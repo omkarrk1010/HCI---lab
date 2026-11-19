@@ -1,5 +1,57 @@
 @import "tailwindcss";
 
+/* Pastel Minimalist Palette — overrides Tailwind's default color tokens so
+   every existing utility class (stone-*, amber-*, rose-*, sky-*, emerald-*)
+   renders in the new soft, decluttered theme without per-component edits. */
+@theme {
+  --color-stone-50: #faf8f6;
+  --color-stone-100: #f3efec;
+  --color-stone-200: #e7dfda;
+  --color-stone-300: #d3c7c0;
+  --color-stone-400: #95897f;
+  --color-stone-500: #776b64;
+  --color-stone-600: #5c5149;
+  --color-stone-700: #544c48;
+  --color-stone-800: #3c3633;
+  --color-stone-900: #2a2523;
+  --color-stone-950: #1c1816;
+
+  --color-amber-50: #fdf3ec;
+  --color-amber-100: #fbe7d9;
+  --color-amber-200: #f6cbae;
+  --color-amber-300: #efad82;
+  --color-amber-400: #e59163;
+  --color-amber-500: #d97a4d;
+  --color-amber-600: #bd623a;
+  --color-amber-700: #984e2f;
+  --color-amber-800: #7a3d22;
+
+  --color-rose-100: #fce3ea;
+  --color-rose-200: #f8c9d6;
+  --color-rose-300: #f3b8c9;
+  --color-rose-400: #ec95af;
+  --color-rose-500: #dd6f93;
+  --color-rose-600: #c1577a;
+  --color-rose-700: #9c4563;
+
+  --color-sky-50: #eff7fd;
+  --color-sky-100: #e3f0fb;
+  --color-sky-200: #c7e2f7;
+  --color-sky-300: #afd3f2;
+  --color-sky-400: #7fb8e8;
+  --color-sky-500: #5a9bd6;
+  --color-sky-600: #4480ba;
+  --color-sky-700: #366a95;
+
+  --color-emerald-100: #def3e9;
+  --color-emerald-200: #bfe8d4;
+  --color-emerald-300: #a9e0c6;
+  --color-emerald-400: #7acba8;
+  --color-emerald-500: #52b189;
+  --color-emerald-600: #3d9873;
+  --color-emerald-700: #2f7a5c;
+}
+
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -12,7 +64,79 @@
     padding: 0;
     overflow-x: hidden;
     user-select: none;
+    background: #faf8f6;
+    transition: background-color 0.3s ease;
   }
+}
+
+/* Dark Mode — flips the same pastel ramp (Tailwind theme vars are plain CSS
+   custom properties, so every existing utility class picks this up with no
+   per-component changes) and re-tints the frosted glass surfaces. */
+.dark {
+  --color-stone-50: #1c1816;
+  --color-stone-100: #27211f;
+  --color-stone-200: #3c3633;
+  --color-stone-300: #544c48;
+  --color-stone-400: #9a8e86;
+  --color-stone-500: #ab9f97;
+  --color-stone-600: #c2b6ae;
+  --color-stone-700: #d3c7c0;
+  --color-stone-800: #ece6e2;
+  --color-stone-900: #f3efec;
+  --color-stone-950: #faf8f6;
+
+  /* Accent ramps keep their mid-tones (300-500) but swap their darkest
+     "text on light bg" shades and lightest "badge bg" shades so labels and
+     pills read correctly against the now-dark glass surfaces. */
+  --color-amber-50: #2e1c10;
+  --color-amber-100: #4a2e1c;
+  --color-amber-200: #6b421f;
+  --color-amber-600: #f6bb97;
+  --color-amber-700: #fad9c0;
+  --color-amber-800: #fde7d6;
+
+  --color-rose-100: #4a1f2b;
+  --color-rose-200: #6b2e3f;
+  --color-rose-600: #f5b9cc;
+  --color-rose-700: #f9d6e2;
+
+  --color-sky-50: #16222f;
+  --color-sky-100: #1f3347;
+  --color-sky-200: #2d4a63;
+  --color-sky-600: #a8d4f5;
+  --color-sky-700: #cfe6fa;
+
+  --color-emerald-100: #1c3a2c;
+  --color-emerald-200: #295640;
+  --color-emerald-600: #a8e8c9;
+  --color-emerald-700: #cdf2e0;
+}
+
+.dark body {
+  background: #1c1816;
+}
+
+.dark .glass-panel {
+  background: rgba(39, 33, 31, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+.dark .glass-panel-light {
+  background: rgba(39, 33, 31, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.55);
+}
+
+.dark .glass-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark .glass-card {
+  background: rgba(36, 31, 29, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 32px -20px rgba(0, 0, 0, 0.55);
 }
 
 /* Custom Scrollbar */
@@ -31,34 +155,35 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
-/* Glassmorphism Surface Utilities */
+/* Glassmorphism Surface Utilities — soft frosted pastel cards */
 .glass-panel {
-  background: rgba(24, 24, 27, 0.72);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(42, 37, 35, 0.08);
+  box-shadow: 0 20px 40px -20px rgba(217, 122, 77, 0.2);
 }
 
 .glass-panel-light {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(42, 37, 35, 0.07);
+  box-shadow: 0 20px 40px -20px rgba(217, 122, 77, 0.14);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(42, 37, 35, 0.09);
 }
 
 .glass-card {
-  background: rgba(20, 20, 22, 0.6);
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(42, 37, 35, 0.07);
+  box-shadow: 0 16px 32px -20px rgba(42, 37, 35, 0.14);
 }
 
 /* Ambient Visual Effects */
@@ -102,16 +227,16 @@
 
 @keyframes pulseHighlight {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 0 0 rgba(217, 122, 77, 0.35);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    box-shadow: 0 0 0 10px rgba(217, 122, 77, 0);
   }
 }
 
 .hci-highlight {
   animation: pulseHighlight 2s infinite;
-  border-color: rgba(245, 158, 11, 0.9) !important;
+  border-color: rgba(217, 122, 77, 0.8) !important;
 }
 
 /* Font Mono for Timers */
